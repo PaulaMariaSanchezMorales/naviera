@@ -1,0 +1,18 @@
+﻿@inherits LayoutComponentBase
+
+<div class="page">
+    <div class="sidebar">
+        <NavMenu />
+    </div>
+
+    <div class="main">
+        <div class="top-row px-4 auth" style="background-color:#778DA9">
+            <LoginDisplay />
+            <a href="https://docs.microsoft.com/aspnet/" class="text-white" target="_blank">About</a>
+        </div>
+
+        <div class="content px-4">
+            @Body
+        </div>
+    </div>
+</div>

@@ -1,0 +1,83 @@
+﻿@page "/Personal"
+
+<h1>Personal</h1>
+
+<p>Listado de personal</p>
+
+<div class="row">
+    <div class="col-8 mb-3">
+        <a class="btn btn-secondary text-black-50" href="PersonalAgregar" role="button">Agregar</a>
+    </div>
+    <div class="col-4 mb-3">
+        <form class="form-inline">
+           <div class="form-group">
+              <button class="btn btn-secondary" href="#" role="button">
+                 <i class="oi oi-magnifying-glass text-black-50"></i>
+              </button>
+              <input type="text" class="form-control" id="textobuscar" placeholder="Buscar">
+           </div>
+        </form>
+    </div>
+</div>
+<table class="table">
+  <thead>
+      <tr class="bg-primary">
+          <th class="text-white" scope="col">Codigo</th>
+          <th class="text-white" scope="col">Nombre</th>
+          <th>Puerto</th>
+          <th>País</th>
+          <th></th>
+          <th></th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <th scope="row">00001</th>
+          <td>Paula María Sánchez</td>
+          <td>Barcelona</td>
+          <td>España</td>
+          <td>
+              <button class="btn btn-secondary" href="#" role="button">
+                  <i class="oi oi-pencil text-black-50"></i>
+              </button>
+          </td>
+          <td>
+              <button class="btn btn-secondary" href="#" role="button">
+                  <i class="oi oi-trash text-black-50"></i>
+              </button>
+          </td>
+      </tr>
+      <tr>
+          <th scope="row">00002</th>
+          <td>Sebastián Morales</td>
+          <td>Buenos Aires</td>
+          <td>Argentina</td>
+          <td>
+              <button class="btn btn-secondary" href="#" role="button">
+                  <i class="oi oi-pencil text-black-50"></i>
+              </button>
+          </td>
+          <td>
+              <button class="btn btn-secondary" href="#" role="button">
+                  <i class="oi oi-trash text-black-50"></i>
+              </button>
+          </td>
+      </tr>
+      <tr>
+          <th scope="row">00003</th>
+          <td>Julio García</td>
+          <td>Los Angeles</td>
+          <td>EEUU</td>
+          <td>
+              <button class="btn btn-secondary" href="#" role="button">
+                  <i class="oi oi-pencil text-black-50"></i>
+              </button>
+          </td>
+          <td>
+              <button class="btn btn-secondary" href="#" role="button">
+                  <i class="oi oi-trash text-black-50"></i>
+              </button>
+          </td>
+      </tr>
+  </tbody>
+</table>
