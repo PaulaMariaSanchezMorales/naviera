@@ -13,71 +13,92 @@ namespace ProyectoMaersk.Pages
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Components;
 #nullable restore
-#line 1 "C:\Users\osanc\source\repos\ProyectoMaersk\ProyectoMaersk\_Imports.razor"
+#line 1 "C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\_Imports.razor"
 using System.Net.Http;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 2 "C:\Users\osanc\source\repos\ProyectoMaersk\ProyectoMaersk\_Imports.razor"
+#line 2 "C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\_Imports.razor"
 using Microsoft.AspNetCore.Authorization;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 3 "C:\Users\osanc\source\repos\ProyectoMaersk\ProyectoMaersk\_Imports.razor"
+#line 3 "C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\_Imports.razor"
 using Microsoft.AspNetCore.Components.Authorization;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 4 "C:\Users\osanc\source\repos\ProyectoMaersk\ProyectoMaersk\_Imports.razor"
+#line 4 "C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\_Imports.razor"
 using Microsoft.AspNetCore.Components.Forms;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 5 "C:\Users\osanc\source\repos\ProyectoMaersk\ProyectoMaersk\_Imports.razor"
+#line 5 "C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\_Imports.razor"
 using Microsoft.AspNetCore.Components.Routing;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 6 "C:\Users\osanc\source\repos\ProyectoMaersk\ProyectoMaersk\_Imports.razor"
+#line 6 "C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\_Imports.razor"
 using Microsoft.AspNetCore.Components.Web;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 7 "C:\Users\osanc\source\repos\ProyectoMaersk\ProyectoMaersk\_Imports.razor"
+#line 7 "C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\_Imports.razor"
 using Microsoft.AspNetCore.Components.Web.Virtualization;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 8 "C:\Users\osanc\source\repos\ProyectoMaersk\ProyectoMaersk\_Imports.razor"
+#line 8 "C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\_Imports.razor"
 using Microsoft.JSInterop;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 9 "C:\Users\osanc\source\repos\ProyectoMaersk\ProyectoMaersk\_Imports.razor"
+#line 9 "C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\_Imports.razor"
 using ProyectoMaersk;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 10 "C:\Users\osanc\source\repos\ProyectoMaersk\ProyectoMaersk\_Imports.razor"
+#line 10 "C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\_Imports.razor"
 using ProyectoMaersk.Shared;
+
+#line default
+#line hidden
+#nullable disable
+#nullable restore
+#line 1 "C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\Pages\Personal.razor"
+using Microsoft.Extensions.Configuration;
+
+#line default
+#line hidden
+#nullable disable
+#nullable restore
+#line 2 "C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\Pages\Personal.razor"
+using MySqlConnector;
+
+#line default
+#line hidden
+#nullable disable
+#nullable restore
+#line 3 "C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\Pages\Personal.razor"
+using Clases;
 
 #line default
 #line hidden
@@ -90,6 +111,56 @@ using ProyectoMaersk.Shared;
         {
         }
         #pragma warning restore 1998
+#nullable restore
+#line 66 "C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\Pages\Personal.razor"
+ 
+    private List<Usuarios> usuarios = new List<Usuarios>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        String connString = config.GetConnectionString("MySqlNaviera");
+        using var connection = new MySqlConnection(connString);
+        {
+            connection.Open();
+            using var command = new MySqlCommand("SELECT * FROM usuarios;", connection);
+            using var reader = command.ExecuteReader();
+            while (await reader.ReadAsync())
+            {
+                var usuario = new Usuarios();
+                usuario.Id = (int)reader["id"];
+                usuario.Tipo = reader["Tipo_empleado"].ToString();
+                usuario.Contraseña = reader["Contraseña"].ToString();
+                usuario.Codigo = reader["Codigo_empleado"].ToString();
+                usuario.Nombre = reader["Nombre"].ToString();
+                usuario.Puerto = reader["Puerto"].ToString();
+                usuario.Pais = reader["Pais"].ToString();
+
+                usuarios.Add(usuario);
+            }
+        }
+    }
+
+    private void borrar(int id)
+    {
+        String connString = config.GetConnectionString("MySqlNaviera");
+        {
+            using var connection = new MySqlConnection(connString);
+            {
+                connection.Open();
+                String q = "Delete from usuarios where id = '" + id + "'";
+
+                using var command = new MySqlCommand(q, connection);
+                var resultado = command.ExecuteNonQuery();
+            }
+        }
+        NavManager.NavigateTo("/Personal");
+    }
+
+#line default
+#line hidden
+#nullable disable
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private NavigationManager NavManager { get; set; }
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private Microsoft.Extensions.Configuration.IConfiguration config { get; set; }
     }
 }
 #pragma warning restore 1591

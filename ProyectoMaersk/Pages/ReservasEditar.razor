@@ -1,0 +1,287 @@
+﻿@using Microsoft.AspNetCore.WebUtilities
+@using Microsoft.Extensions.Configuration
+@using MySqlConnector
+@using Clases
+@inject Microsoft.Extensions.Configuration.IConfiguration config
+@inject NavigationManager NavManager
+@page "/ReservasEditar"
+
+<h1>Reservas</h1>
+
+<p>Modificar reservas</p>
+
+<div class="container">
+    <EditForm Model=@reserva OnSubmit="@grabar">
+        <div class="form-group">
+            <label for="id">ID</label>
+            <InputNumber @bind-Value="reserva.Id" readonly class="form-control" id="id"/>
+        </div>
+        <div class="form-group">
+            <label for="codigo">Codigo</label>
+            <InputText @bind-Value="reserva.Codigo" readonly class="form-control" id="codigo"/>
+        </div>
+        <div class="form-group">
+            <label for="empresa">Empresa</label>
+            <InputText id="empresa" @bind-Value="reserva.Empresa" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label for="nit">Numero Id. Tributaria</label>
+            <InputText id="nit" @bind-Value="reserva.Nit" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label for="direccion">Direccion</label>
+            <InputText id="direccion" @bind-Value="reserva.Direccion" class="form-control" /> <! ––para poder editar la base -->
+        </div>
+        <div class="form-group">
+            <label for="paisorigen">Pais Origen</label>
+            <InputSelect @bind-Value="reserva.Pais_Origen" class="form-control" id="paisorigen">
+                @foreach (var pais in Paises_Origen)
+                {
+                    <option value="@pais.Codigo">@pais.Nombre</option>
+                }
+            </InputSelect>
+        </div>
+        <div class="form-group">
+            <label for="puertoorigen">Puerto Origen</label>
+            <InputSelect @bind-Value="reserva.Puerto_Origen" class="form-control" id="puertoorigen">
+                @foreach (var puerto in Puertos_Origen)
+                {
+                    <option value="@puerto.Codigo">@puerto.Nombre</option>
+                }
+            </InputSelect>
+        </div>
+        <div class="form-group">
+            <label for="paisdestino">Pais Destino</label>
+            <InputSelect @bind-Value="reserva.Pais_Destino" class="form-control" id="paisdestino">
+                @foreach (var pais in Paises_Destino)
+                {
+                    <option value="@pais.Codigo">@pais.Nombre</option>
+                }
+            </InputSelect>
+        </div>
+        <div class="form-group">
+            <label for="puertodestino">Puerto Destino</label>
+            <InputSelect @bind-Value="reserva.Puerto_Destino" class="form-control" id="puertodestino">
+                @foreach (var puerto in Puertos_Destino)
+                {
+                    <option value="@puerto.Codigo">@puerto.Nombre</option>
+                }
+            </InputSelect>
+        </div>
+        <div class="form-group">
+            <label for="receptor">Receptor de la Carga</label>
+            <InputText id="receptor" @bind-Value="reserva.Receptor" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label for="contrasenia">Contraseña de Recepcion</label>">
+            <input type="text" value="@reserva.Contraseña_Recepcion" readonly class="form-control" id="contrasenia">
+        </div>
+        <div class="form-group">
+            <label for="tipocarga">Tipo de Carga</label>
+            <InputSelect @bind-Value="reserva.Tipo_Carga" class="form-control" id="tipocarga">
+                @foreach (var carga in Tipo_Carga)
+                {
+                    <option value="@carga.Nombre">@carga.Nombre</option>
+                }
+            </InputSelect>
+        </div>
+        <div class="form-group">
+            <label for="descripcion">Descripcion de la carga</label>
+            <InputText id="descripcion" @bind-Value="reserva.Descripcion" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label for="peso">Peso en Kg.</label>
+            <InputText id="peso" @bind-Value="reserva.Peso" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label for="valor">Valor</label>
+            <InputSelect @bind-Value="reserva.Valor" class="form-control" id="valor">
+                @foreach (var valor in Valores)
+                {
+                    <option value="@valor.Cantidad">@valor.Cantidad</option>
+                }
+            </InputSelect>
+        </div>
+        <div class="form-group">
+            <label for="tipocontenedor">Tipo de Contenedor</label>
+            <InputSelect @bind-Value="reserva.Tipo_Contenedor" class="form-control" id="tipocontenedor">
+                @foreach (var contenedor in Tipo_Contenedores)
+                {
+                    <option value="@contenedor.Nombre">@contenedor.Nombre</option>
+                }
+            </InputSelect>
+        </div>
+        <button class="btn btn-primary text-dark">Enviar</button>
+    </EditForm>
+</div>
+
+@code
+{
+    int Id = 0;
+    Reserva reserva = new Reserva();
+
+    List<Pais> Paises_Origen = new List<Pais>();
+    List<Pais> Paises_Destino = new List<Pais>();
+
+    List<Puerto> Puertos_Origen = new List<Puerto>();
+    List<Puerto> Puertos_Destino = new List<Puerto>();
+
+    List<Tipo_carga> Tipo_Carga = new List<Tipo_carga>();
+
+    List<Valor> Valores = new List<Valor>();
+
+    List<Tipo_contenedor> Tipo_Contenedores = new List<Tipo_contenedor>();
+
+    void Llena_Combos() //no regresa ningún resultado void (lista de todos lo países)
+    {
+        String connString = config.GetConnectionString("MySqlNaviera");
+        using var connection = new MySqlConnection(connString);
+        {
+            //paises
+            connection.Open();
+            using var command1 = new MySqlCommand("SELECT * FROM paises;", connection);
+            {
+                using var reader1 = command1.ExecuteReader();
+                {
+                    while (reader1.Read())
+                    {
+                        var pais = new Pais();
+                        pais.Codigo = reader1["codigo"].ToString();
+                        pais.Nombre = reader1["nombre"].ToString();
+                        Paises_Origen.Add(pais);
+                        Paises_Destino.Add(pais);
+                    }
+                }
+            }
+            //puertos
+            using var command2 = new MySqlCommand("SELECT * FROM puertos;", connection);
+            {
+                using var reader2 = command2.ExecuteReader();
+                {
+                    while (reader2.Read())
+                    {
+                        var puerto = new Puerto();
+                        puerto.Codigo = reader2["codigo"].ToString();
+                        puerto.Nombre = reader2["nombre"].ToString();
+                        Puertos_Origen.Add(puerto);
+                        Puertos_Destino.Add(puerto);
+                    }
+                }
+            }
+            //cargas
+            using var command3 = new MySqlCommand("SELECT * FROM tipo_carga;", connection);
+            {
+                using var reader3 = command3.ExecuteReader();
+                {
+                    while (reader3.Read())
+                    {
+                        var carga = new Tipo_carga();
+                        carga.Nombre = reader3["nombre"].ToString();
+                        Tipo_Carga.Add(carga);
+                    }
+                }
+            }
+            //valores
+            using var command4 = new MySqlCommand("SELECT * FROM valores;", connection);
+            {
+                using var reader4 = command4.ExecuteReader();
+                {
+                    while (reader4.Read())
+                    {
+                        var valor = new Valor();
+                        valor.Cantidad = reader4["cantidades"].ToString();
+                        Valores.Add(valor);
+                    }
+                }
+            }
+            //contenedores
+            using var command5 = new MySqlCommand("SELECT * FROM tipo_contenedores;", connection);
+            {
+                using var reader5 = command5.ExecuteReader();
+                {
+                    while (reader5.Read())
+                    {
+                        var contenedor = new Tipo_contenedor();
+                        contenedor.Nombre = reader5["nombre"].ToString();
+                        contenedor.Codigo = reader5["codigo"].ToString();
+                        Tipo_Contenedores.Add(contenedor);
+                    }
+                }
+            }
+        }
+    }
+
+    void grabar()
+    {
+        String connString = config.GetConnectionString("MySqlNaviera");
+        using var connection = new MySqlConnection(connString);
+        {
+            connection.Open();
+            String q = "UPDATE reserva_contenedor SET ";
+            q = q + "empresa = '" + reserva.Empresa + "',";
+            q = q + " nit = '" + reserva.Nit + "',";
+            q = q + " direccion = '" + reserva.Direccion + "',";
+            q = q + " puerto_origen = '" + reserva.Puerto_Origen + "',";
+            q = q + " pais_origen = '" + reserva.Pais_Origen + "',";
+            q = q + " puerto_destino = '" + reserva.Puerto_Destino + "',";
+            q = q + " pais_destino = '" + reserva.Pais_Destino + "',";
+            q = q + " receptor = '" + reserva.Receptor + "',";
+            q = q + " contraseña_recepcion = '" + reserva.Contraseña_Recepcion + "',";
+            q = q + " tipo_carga = '" + reserva.Tipo_Carga + "',";
+            q = q + " descripcion_carga = '" + reserva.Descripcion + "',";
+            q = q + " peso_carga = '" + reserva.Peso + "',";
+            q = q + " valor_carga = '" + reserva.Valor + "',";
+            q = q + " tipo_contenedor = '" + reserva.Tipo_Contenedor + "'";
+
+            q = q + " where codigo_contenedor = '" + reserva.Codigo + "'";
+
+            using var command = new MySqlCommand(q, connection);
+            var resultado = command.ExecuteNonQuery();
+        }
+
+        NavManager.NavigateTo("/");
+    }
+
+    protected override void OnInitialized()
+    {
+        var uri = NavManager.ToAbsoluteUri(NavManager.Uri);
+        if (QueryHelpers.ParseQuery(uri.Query).TryGetValue("Id", out var param))
+        {
+            String parametro = param.First();
+            if (parametro != null)
+            {
+                Int32.TryParse(parametro, out Id);
+            }
+        }
+
+        Llena_Combos();
+
+        String connString = config.GetConnectionString("MySqlNaviera");
+        using var connection = new MySqlConnection(connString);
+        {
+            connection.Open();
+            String q = "SELECT * FROM reserva_contenedor where id = '" + Id + "';";
+            using var command = new MySqlCommand(q, connection);
+            using var reader = command.ExecuteReader();
+            while (reader.Read())
+            {
+                reserva.Id = (int) reader["id"];
+                reserva.Codigo = reader["Codigo_contenedor"].ToString();
+                reserva.Empresa = reader["Empresa"].ToString();
+                reserva.Nit = reader["Nit"].ToString();
+                reserva.Direccion = reader["Direccion"].ToString();
+                reserva.Puerto_Origen = reader["Puerto_Origen"].ToString();
+                reserva.Pais_Origen = reader["Pais_Origen"].ToString();
+                reserva.Puerto_Destino = reader["Puerto_Destino"].ToString();
+                reserva.Pais_Destino = reader["Pais_Destino"].ToString();
+                reserva.Receptor = reader["Receptor"].ToString();
+                reserva.Contraseña_Recepcion = reader["Contraseña_Recepcion"].ToString();
+                reserva.Tipo_Carga = reader["Tipo_Carga"].ToString();
+                reserva.Descripcion = reader["Descripcion_carga"].ToString();
+                reserva.Peso = reader["Peso_carga"].ToString();
+                reserva.Valor = reader["Valor_carga"].ToString();
+                reserva.Tipo_Contenedor = reader["Tipo_Contenedor"].ToString();
+            }
+        }
+    }
+}

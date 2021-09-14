@@ -1,63 +1,78 @@
-﻿@page "/"
+﻿@using Microsoft.Extensions.Configuration
+@using MySqlConnector
+@using Clases
+@inject Microsoft.Extensions.Configuration.IConfiguration config
+@inject NavigationManager NavManager
+@page "/"
 
-    <AuthorizeView>
-        <Authorized>
-            <h1>Reservas</h1>
+<AuthorizeView>
+    <Authorized>
 
-            <p>Listado de reservas</p>
+        <h1>Reservas</h1>
 
-            <div class="row">
-                <div class="col-8 mb-3">
-                    <a class="btn btn-secondary text-dark" href="ReservasAgregar" role="button">Agregar</a>
-                </div>
-                <div class="col-4 mb-3">
-                    <form class="form-inline">
-                        <div class="form-group">
-                            <button class="btn btn-secondary" href="#" role="button">
-                                <i class="oi oi-magnifying-glass text-dark"></i>
-                            </button>
-                            <input type="text" class="form-control" id="textobuscar" placeholder="Buscar">
-                        </div>
-                    </form>
-                </div>
+        <p>Listado de reservas</p>
+
+        <div class="row">
+            <div class="col-8 mb-3">
+                <a class="btn btn-secondary text-dark" href="ReservasEditar" role="button">Agregar</a>
             </div>
-            <table class="table table-sm">
-                <thead>
-                    <tr class="bg-primary text-white">
-                        <th>Codigo</th>
-                        <th>Empresa</th>
-                        <th>Número Tributario</th>
-                        <th>Pais Origen</th>
-                        <th>Puerto Origen</th>
-                        <th>Pais Destino</th>
-                        <th>Puerto Destino</th>
-                        <th>Contraseña de Recepcion</th>
-                        <th>Tipo de Carga</th>
-                        <th>Descripcion de la Carga</th>
-                        <th>Peso</th>
-                        <th>Valor</th>
-                        <th>Tipo Contenedor</th>
-                        <th></th>
-                        <th></th>
-                        <th></th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
+            <div class="col-4 mb-3">
+                <form class="form-inline">
+                    <div class="form-group">
+                        <button class="btn btn-secondary" href="#" role="button">
+                            <i class="oi oi-magnifying-glass text-dark"></i>
+                        </button>
+                        <input type="text" class="form-control" id="textobuscar" placeholder="Buscar">
+                    </div>
+                </form>
+            </div>
+        </div>
+        <table class="table table-sm">
+            <thead>
+                <tr class="bg-primary">
+                    <th>ID</th>
+                    <th>Codigo</th>
+                    <th>Empresa</th>
+                    <th>Número Tributario</th>
+                    <th>Direccion</th>
+                    <th>Puerto Origen</th>
+                    <th>Pais Origen</th>
+                    <th>Puerto Destino</th>
+                    <th>Pais Destino</th>
+                    <th>Receptor de la carga</th>
+                    <th>Contraseña de Recepcion</th>
+                    <th>Tipo de Carga</th>
+                    <th>Descripcion de la Carga</th>
+                    <th>Peso</th>
+                    <th>Valor</th>
+                    <th>Tipo Contenedor</th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var reserva in reservas)
+                {
                     <tr>
-                        <td>4921</td>
-                        <th scope="row">Transportes Los Andes</th>
-                        <td>30124912-3</td>
-                        <td>Guatemala</td>
-                        <td>Santo Tomas</td>
-                        <td>España</td>
-                        <td>Barcelona</td>
-                        <td>4928118</td>
-                        <td>Bananos</td>
-                        <td>Bananos Premium de Guatemala</td>
-                        <td>5,000 Kg.</td>
-                        <td>US$ 2,000.00</td>
-                        <td>Mediano</td>
+                        <td>@reserva.Id</td>
+                        <td>@reserva.Codigo</td>
+                        <td>@reserva.Empresa</td>
+                        <td>@reserva.Nit</td>
+                        <td>@reserva.Direccion</td>
+                        <td>@reserva.Puerto_Origen</td>
+                        <td>@reserva.Pais_Origen</td>
+                        <td>@reserva.Puerto_Destino</td>
+                        <td>@reserva.Pais_Destino</td>
+                        <td>@reserva.Receptor</td>
+                        <td>@reserva.Contraseña_Recepcion</td>
+                        <td>@reserva.Tipo_Carga</td>
+                        <td>@reserva.Descripcion</td>
+                        <td>@reserva.Peso</td>
+                        <td>@reserva.Valor</td>
+                        <td>@reserva.Tipo_Contenedor</td>
                         <td>
                             <button class="btn btn-secondary text-dark" href="#" role="button">
                                 <i class="oi oi-document text-dark"></i>
@@ -69,76 +84,96 @@
                             </button>
                         </td>
                         <td>
-                            <button class="btn btn-secondary" href="#" role="button">
-                                <i class="oi oi-pencil text-black-50"></i>
-                            </button>
-                        </td>
-                        <td>
-                            <button class="btn btn-secondary" href="#" role="button">
-                                <i class="oi oi-trash text-black-50"></i>
-                            </button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>4922</td>
-                        <th scope="row">Empresa Española de Importaciones</th>
-                        <td>4218223-1</td>
-                        <td>España</td>
-                        <td>Barcelona</td>
-                        <td>EEUU</td>
-                        <td>Los Angeles</td>
-                        <td>4421111</td>
-                        <td>Vehiculos Toyota</td>
-                        <td>10 Vehiculos Toyota Prado</td>
-                        <td>25,000 Kg.</td>
-                        <td>US$ 2,000,000.00</td>
-                        <td>Grande</td>
-                        <td>
-                            <button class="btn btn-secondary text-dark" href="#" role="button">
-                                <i class="oi oi-document text-dark"></i>
-                            </button>
-                        </td>
-                        <td>
-                            <button class="btn btn-secondary text-dark" href="#" role="button">
-                                <i class="oi oi-data-transfer-download text-dark"></i>
-                            </button>
-                        </td>
-                        <td>
-                            <button class="btn btn-secondary" href="#" role="button">
+                            <a class="btn btn-secondary text-dark" href="ReservasEditar?Id=@reserva.Id" role="button">
                                 <i class="oi oi-pencil text-dark"></i>
-                            </button>
+                            </a>
                         </td>
                         <td>
-                            <button class="btn btn-secondary" href="#" role="button">
+                            <button class="btn btn-secondary" @onclick="() => borrar(reserva.Id)" role="button">
                                 <i class="oi oi-trash text-dark"></i>
                             </button>
                         </td>
                     </tr>
-                </tbody>
-            </table>
-            <div class="row">
-                <div class="col-12 text-center">
-                    <button class="btn btn-secondary text-dark" href="#" role="button">
-                        <i class="oi oi-grid-four-up text-dark"></i>
-                        Descargar a Excel
-                    </button>
-                    <button class="btn btn-secondary text-dark" href="#" role="button">
-                        <i class="oi oi-data-transfer-download text-dark"></i>
-                        PDF
-                    </button>
-                </div>
+                }
+            </tbody>
+        </table>
+        <div class="row">
+            <div class="col-12 text-center">
+                <button class="btn btn-secondary text-dark" href="#" role="button">
+                    <i class="oi oi-grid-four-up text-dark"></i>
+                    Descargar a Excel
+                </button>
+                <button class="btn btn-secondary text-dark" href="#" role="button">
+                    <i class="oi oi-data-transfer-download text-dark"></i>
+                    PDF
+                </button>
             </div>
-</Authorized>
-        <NotAuthorized>
-            <div class="row">
-                <div class="col-12 text-center">
-                    <div style="font-size: 64px;">NAVIERA MAERKS LINE</div>
-                </div>
+        </div>
+    </Authorized>
+    <NotAuthorized>
+        <div class="row">
+            <div class="col-12 text-center">
+                <div style="font-size: 64px;">NAVIERA MAERKS LINE</div>
             </div>
-            <div class="row">
-                <div class="col-12 m-0 p-0 text-center">
-                    <img src="/barco.jpg"  style="width:100%;">
-                </div>
+        </div>
+        <div class="row">
+            <div class="col-12 m-0 p-0 text-center">
+                <img src="/barco.jpg" style="width:100%;">
             </div>
-        </NotAuthorized>
+        </div>
+        }
+    </NotAuthorized>
 </AuthorizeView>
+
+@code
+{
+    private List<Reserva> reservas = new List<Reserva>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        String connString = config.GetConnectionString("MySqlNaviera");
+        using var connection = new MySqlConnection(connString);
+        {
+            connection.Open();
+            using var command = new MySqlCommand("SELECT * FROM reserva_contenedor;", connection);
+            using var reader = command.ExecuteReader();
+            while (await reader.ReadAsync())
+            {
+                var reserva = new Reserva();
+                reserva.Id = (int) reader["id"];
+                reserva.Codigo = reader["Codigo_contenedor"].ToString();
+                reserva.Empresa = reader["Empresa"].ToString();
+                reserva.Nit = reader["Nit"].ToString();
+                reserva.Direccion = reader["Direccion"].ToString();
+                reserva.Puerto_Origen = reader["Puerto_Origen"].ToString();
+                reserva.Pais_Origen = reader["Pais_Origen"].ToString();
+                reserva.Puerto_Destino = reader["Puerto_Destino"].ToString();
+                reserva.Pais_Destino = reader["Pais_Destino"].ToString();
+                reserva.Receptor = reader["Receptor"].ToString();
+                reserva.Contraseña_Recepcion = reader["Contraseña_Recepcion"].ToString();
+                reserva.Tipo_Carga = reader["Tipo_Carga"].ToString();
+                reserva.Descripcion = reader["Descripcion_carga"].ToString();
+                reserva.Peso = reader["Peso_carga"].ToString();
+                reserva.Valor = reader["Valor_carga"].ToString();
+                reserva.Tipo_Contenedor = reader["Tipo_Contenedor"].ToString();
+                reservas.Add(reserva);
+            }
+        }
+    }
+
+    private void borrar(int id)
+    {
+        String connString = config.GetConnectionString("MySqlNaviera");
+        {
+            using var connection = new MySqlConnection(connString);
+            {
+                connection.Open();
+                String q = "Delete from reserva_contenedor where id = '" + id + "'";
+
+                using var command = new MySqlCommand(q, connection);
+                var resultado = command.ExecuteNonQuery();
+            }
+        }
+        NavManager.NavigateTo("/");
+    }
+}

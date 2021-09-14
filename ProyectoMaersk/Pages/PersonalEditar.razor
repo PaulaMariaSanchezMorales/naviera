@@ -1,0 +1,190 @@
+﻿@using Microsoft.AspNetCore.WebUtilities
+@using Microsoft.Extensions.Configuration
+@using MySqlConnector
+@using Clases
+@inject Microsoft.Extensions.Configuration.IConfiguration config
+@inject NavigationManager NavManager
+@page "/PersonalEditar"
+
+<h1>Personal</h1>
+
+<p>Modificar personal</p>
+
+<div class="container">
+    <EditForm Model=@usuario OnSubmit="@grabar">
+        <div class="form-group">
+            <label for="tipoempleado">Tipo de empleado</label>
+            <InputSelect @bind-Value="usuario.Tipo" class="form-control" id="tipoempleado">
+                @foreach (var tipo_empleado in Tipo_empleados)
+                {
+                    <option value="@tipo_empleado.Nombre">@tipo_empleado.Nombre</option>
+                }
+            </InputSelect>
+        </div>
+        <div class="form-group">
+            <label for="nombre">Nombre</label>
+            <InputText @bind-Value="usuario.Nombre" class="form-control" id="nombre" />
+        </div>
+        <div class="form-group">
+            <label for="contraseña">Contraseña</label>
+            <InputText @bind-Value="usuario.Contraseña" readonly class="form-control" id="contraseña" />
+        </div>
+        <div class="form-group">
+            <label for="codigo">Código de empleado</label>
+            @if (usuario.Id > 0)
+            {
+                <InputText @bind-Value="usuario.Codigo" readonly class="form-control" id="codigo" />
+
+            }
+            else
+            {
+                <InputText @bind-Value="usuario.Codigo" class="form-control" id="codigo" />
+            }
+        </div>
+        <div class="form-group">
+            <label for="pais">Pais</label>
+            <InputSelect @bind-Value="usuario.Pais" class="form-control" id="pais">
+                @foreach (var pais in Paises)
+                {
+                    <option value="@pais.Codigo">@pais.Nombre</option>
+                }
+            </InputSelect>
+        </div>
+        <div class="form-group">
+            <label for="puerto">Puerto</label>
+            <InputSelect @bind-Value="usuario.Puerto" class="form-control" id="puerto">
+                @foreach (var puerto in Puertos)
+                {
+                    <option value="@puerto.Codigo">@puerto.Nombre</option>
+                }
+            </InputSelect>
+        </div>
+        <button class="btn btn-primary text-dark">Enviar</button>
+    </EditForm>
+</div>
+
+@code
+{
+    int Id = 0;
+    Usuarios usuario = new Usuarios();
+
+    List<Tipo_empleado> Tipo_empleados = new List<Tipo_empleado>();
+    List<Pais> Paises = new List<Pais>();
+    List<Puerto> Puertos = new List<Puerto>();
+
+    void Llena_Combos() //no regresa ningún resultado void (lista de todos lo países)
+    {
+        String connString = config.GetConnectionString("MySqlNaviera");
+        using var connection = new MySqlConnection(connString);
+        {
+            //tipo de empleado
+            connection.Open();
+            using var command1 = new MySqlCommand("SELECT * FROM tipo_empleado;", connection);
+            {
+                using var reader1 = command1.ExecuteReader();
+                {
+                    while (reader1.Read())
+                    {
+                        var empleado = new Tipo_empleado();
+                        empleado.Nombre = reader1["nombre"].ToString();
+                        Tipo_empleados.Add(empleado);
+                    }
+                }
+            }
+
+            //paises
+            using var command2 = new MySqlCommand("SELECT * FROM paises;", connection);
+            {
+                using var reader2 = command2.ExecuteReader();
+                {
+                    while (reader2.Read())
+                    {
+                        var pais = new Pais();
+                        pais.Codigo = reader2["codigo"].ToString();
+                        pais.Nombre = reader2["nombre"].ToString();
+                        Paises.Add(pais);
+                    }
+                }
+            }
+
+            //puertos
+            using var command3 = new MySqlCommand("SELECT * FROM puertos;", connection);
+            {
+                using var reader3 = command3.ExecuteReader();
+                {
+                    while (reader3.Read())
+                    {
+                        var puerto = new Puerto();
+                        puerto.Codigo = reader3["codigo"].ToString();
+                        puerto.Nombre = reader3["nombre"].ToString();
+                        Puertos.Add(puerto);
+                    }
+                }
+            }
+        }
+    }
+
+    void grabar()
+    {
+        String connString = config.GetConnectionString("MySqlNaviera");
+        using var connection = new MySqlConnection(connString);
+        {
+            String q = "";
+
+            connection.Open();
+            if (usuario.Id > 0)
+            {
+                q = q + "UPDATE usuarios SET ";
+                q = q + "nombre = '" + usuario.Nombre + "',";
+                q = q + "tipo_empleado = '" + usuario.Tipo + "',";
+                q = q + " puerto = '" + usuario.Puerto + "',";
+                q = q + " pais = '" + usuario.Pais + "'";
+
+                q = q + " where id = '" + usuario.Id + "'";
+            }
+            else
+            {
+                q = q + "INSERT INTO usuarios(tipo_empleado, contraseña, codigo_empleado, nombre, puerto, pais)" +
+                        "values ('" + usuario.Tipo + "','" + usuario.Contraseña + "','" + usuario.Codigo + "','" + usuario.Nombre + "','" + usuario.Puerto + "','" + usuario.Pais + "')";
+            }
+            using var command = new MySqlCommand(q, connection);
+            var resultado = command.ExecuteNonQuery();
+        }
+
+        NavManager.NavigateTo("/");
+    }
+
+    protected override void OnInitialized()
+    {
+        var uri = NavManager.ToAbsoluteUri(NavManager.Uri);
+        if (QueryHelpers.ParseQuery(uri.Query).TryGetValue("Id", out var param))
+        {
+            String parametro = param.First();
+            if (parametro != null)
+            {
+                Int32.TryParse(parametro, out Id);
+            }
+        }
+
+        Llena_Combos();
+
+        String connString = config.GetConnectionString("MySqlNaviera");
+        using var connection = new MySqlConnection(connString);
+        {
+            connection.Open();
+            String q = "SELECT * FROM usuarios where id = '" + Id + "';";
+            using var command = new MySqlCommand(q, connection);
+            using var reader = command.ExecuteReader();
+            while (reader.Read())
+            {
+                usuario.Id = (int)reader["id"];
+                usuario.Tipo = reader["tipo_empleado"].ToString();
+                usuario.Contraseña = reader["contraseña"].ToString();
+                usuario.Codigo = reader["codigo_empleado"].ToString();
+                usuario.Nombre = reader["nombre"].ToString();
+                usuario.Puerto = reader["puerto"].ToString();
+                usuario.Pais = reader["pais"].ToString();
+            }
+        }
+    }
+}

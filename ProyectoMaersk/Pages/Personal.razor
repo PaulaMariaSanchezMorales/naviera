@@ -1,4 +1,9 @@
-﻿@page "/Personal"
+﻿@using Microsoft.Extensions.Configuration
+@using MySqlConnector
+@using Clases
+@inject Microsoft.Extensions.Configuration.IConfiguration config
+@inject NavigationManager NavManager
+@page "/Personal"
 
 <h1>Personal</h1>
 
@@ -6,78 +11,98 @@
 
 <div class="row">
     <div class="col-8 mb-3">
-        <a class="btn btn-secondary text-black-50" href="PersonalAgregar" role="button">Agregar</a>
+        <a class="btn btn-secondary text-dark" href="PersonalEditar" role="button">Agregar</a>
     </div>
     <div class="col-4 mb-3">
         <form class="form-inline">
-           <div class="form-group">
-              <button class="btn btn-secondary" href="#" role="button">
-                 <i class="oi oi-magnifying-glass text-black-50"></i>
-              </button>
-              <input type="text" class="form-control" id="textobuscar" placeholder="Buscar">
-           </div>
+            <div class="form-group">
+                <button class="btn btn-secondary" href="#" role="button">
+                    <i class="oi oi-magnifying-glass text-dark"></i>
+                </button>
+                <input type="text" class="form-control" id="textobuscar" placeholder="Buscar">
+            </div>
         </form>
     </div>
 </div>
-<table class="table">
-  <thead>
-      <tr class="bg-primary">
-          <th class="text-white" scope="col">Codigo</th>
-          <th class="text-white" scope="col">Nombre</th>
-          <th>Puerto</th>
-          <th>País</th>
-          <th></th>
-          <th></th>
-      </tr>
-  </thead>
-  <tbody>
-      <tr>
-          <th scope="row">00001</th>
-          <td>Paula María Sánchez</td>
-          <td>Barcelona</td>
-          <td>España</td>
-          <td>
-              <button class="btn btn-secondary" href="#" role="button">
-                  <i class="oi oi-pencil text-black-50"></i>
-              </button>
-          </td>
-          <td>
-              <button class="btn btn-secondary" href="#" role="button">
-                  <i class="oi oi-trash text-black-50"></i>
-              </button>
-          </td>
-      </tr>
-      <tr>
-          <th scope="row">00002</th>
-          <td>Sebastián Morales</td>
-          <td>Buenos Aires</td>
-          <td>Argentina</td>
-          <td>
-              <button class="btn btn-secondary" href="#" role="button">
-                  <i class="oi oi-pencil text-black-50"></i>
-              </button>
-          </td>
-          <td>
-              <button class="btn btn-secondary" href="#" role="button">
-                  <i class="oi oi-trash text-black-50"></i>
-              </button>
-          </td>
-      </tr>
-      <tr>
-          <th scope="row">00003</th>
-          <td>Julio García</td>
-          <td>Los Angeles</td>
-          <td>EEUU</td>
-          <td>
-              <button class="btn btn-secondary" href="#" role="button">
-                  <i class="oi oi-pencil text-black-50"></i>
-              </button>
-          </td>
-          <td>
-              <button class="btn btn-secondary" href="#" role="button">
-                  <i class="oi oi-trash text-black-50"></i>
-              </button>
-          </td>
-      </tr>
-  </tbody>
+<table class="table table-sm">
+    <thead>
+        <tr class="bg-primary">
+            <th>Tipo de empleado</th>
+            <th>Contraseña</th>
+            <th>Codigo</th>
+            <th>Nombre</th>
+            <th>Puerto</th>
+            <th>País</th>
+            <th></th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var usuario in usuarios)
+        {
+        <tr>
+            <td>@usuario.Tipo</td>
+            <td>@usuario.Contraseña</td>
+            <td>@usuario.Codigo</td>
+            <td>@usuario.Nombre</td>
+            <td>@usuario.Puerto</td>
+            <td>@usuario.Pais</td>
+            <td>
+                <a class="btn btn-secondary text-dark" href="PersonalEditar?Id=@usuario.Id" role="button">
+                    <i class="oi oi-pencil text-dark"></i>
+                </a>
+            </td>
+            <td>
+                <button class="btn btn-secondary" @onclick="() => borrar(usuario.Id)" role="button">
+                    <i class="oi oi-trash text-dark"></i>
+                </button>
+            </td>
+        </tr>
+        }
+    </tbody>
 </table>
+
+@code
+{
+    private List<Usuarios> usuarios = new List<Usuarios>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        String connString = config.GetConnectionString("MySqlNaviera");
+        using var connection = new MySqlConnection(connString);
+        {
+            connection.Open();
+            using var command = new MySqlCommand("SELECT * FROM usuarios;", connection);
+            using var reader = command.ExecuteReader();
+            while (await reader.ReadAsync())
+            {
+                var usuario = new Usuarios();
+                usuario.Id = (int)reader["id"];
+                usuario.Tipo = reader["Tipo_empleado"].ToString();
+                usuario.Contraseña = reader["Contraseña"].ToString();
+                usuario.Codigo = reader["Codigo_empleado"].ToString();
+                usuario.Nombre = reader["Nombre"].ToString();
+                usuario.Puerto = reader["Puerto"].ToString();
+                usuario.Pais = reader["Pais"].ToString();
+
+                usuarios.Add(usuario);
+            }
+        }
+    }
+
+    private void borrar(int id)
+    {
+        String connString = config.GetConnectionString("MySqlNaviera");
+        {
+            using var connection = new MySqlConnection(connString);
+            {
+                connection.Open();
+                String q = "Delete from usuarios where id = '" + id + "'";
+
+                using var command = new MySqlCommand(q, connection);
+                var resultado = command.ExecuteNonQuery();
+            }
+        }
+        NavManager.NavigateTo("/Personal");
+    }
+}
