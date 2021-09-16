@@ -112,30 +112,55 @@ using Clases;
         }
         #pragma warning restore 1998
 #nullable restore
-#line 129 "C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\Pages\Index.razor"
+#line 131 "C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\Pages\Index.razor"
  
     private List<Reserva> reservas = new List<Reserva>();
+    Busqueda busqueda = new Busqueda();
 
-    protected override async Task OnInitializedAsync()
+    public void lee_reservas(string Texto)
     {
+        reservas.Clear();
         String connString = config.GetConnectionString("MySqlNaviera");
         using var connection = new MySqlConnection(connString);
         {
             connection.Open();
-            using var command = new MySqlCommand("SELECT * FROM reserva_contenedor;", connection);
+
+            string q = "SELECT * FROM reserva_contenedor";
+            if (Texto != "")
+            {
+                q = q + " where codigo_contenedor ='" + Texto + "' ";
+                q = q + "or empresa ='" + Texto + "' ";
+                q = q + "or nit ='" + Texto + "' ";
+                q = q + "or direccion ='" + Texto + "' ";
+                q = q + "or puerto_origen ='" + Texto + "' ";
+                q = q + "or pais_origen ='" + Texto + "' ";
+                q = q + "or puerto_destino ='" + Texto + "' ";
+                q = q + "or pais_destino ='" + Texto + "' ";
+                q = q + "or receptor ='" + Texto + "' ";
+                q = q + "or contraseña_recepcion ='" + Texto + "' ";
+                q = q + "or tipo_carga ='" + Texto + "' ";
+                q = q + "or descripcion_carga ='" + Texto + "' ";
+                q = q + "or peso_carga ='" + Texto + "' ";
+                q = q + "or valor_carga ='" + Texto + "' ";
+                q = q + "or tipo_contenedor ='" + Texto + "'";
+            }
+
+            using var command = new MySqlCommand(q, connection);
             using var reader = command.ExecuteReader();
-            while (await reader.ReadAsync())
+            while (reader.Read())
             {
                 var reserva = new Reserva();
-                reserva.Id = (int) reader["id"];
+                reserva.Id = (int)reader["id"];
                 reserva.Codigo = reader["Codigo_contenedor"].ToString();
                 reserva.Empresa = reader["Empresa"].ToString();
                 reserva.Nit = reader["Nit"].ToString();
                 reserva.Direccion = reader["Direccion"].ToString();
                 reserva.Puerto_Origen = reader["Puerto_Origen"].ToString();
                 reserva.Pais_Origen = reader["Pais_Origen"].ToString();
+                reserva.Hora_Salida = ((DateTime)reader["Hora_Salida"]).ToString("dd/MM/yyyy hh:mm tt"); //convierte lo que la base de datos trae a tipo DateTime de C# y le aplica el formato
                 reserva.Puerto_Destino = reader["Puerto_Destino"].ToString();
                 reserva.Pais_Destino = reader["Pais_Destino"].ToString();
+                reserva.Hora_Llegada = ((DateTime)reader["Hora_Llegada"]).ToString("dd/MM/yyyy hh:mm tt");
                 reserva.Receptor = reader["Receptor"].ToString();
                 reserva.Contraseña_Recepcion = reader["Contraseña_Recepcion"].ToString();
                 reserva.Tipo_Carga = reader["Tipo_Carga"].ToString();
@@ -146,6 +171,11 @@ using Clases;
                 reservas.Add(reserva);
             }
         }
+    }
+
+    protected override void OnInitialized()
+    {
+        lee_reservas("");
     }
 
     private void borrar(int id)
@@ -161,6 +191,12 @@ using Clases;
                 var resultado = command.ExecuteNonQuery();
             }
         }
+        NavManager.NavigateTo("/");
+    }
+
+    private void buscar(string Texto)
+    {
+        lee_reservas(Texto);
         NavManager.NavigateTo("/");
     }
 

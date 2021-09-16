@@ -14,22 +14,23 @@
         <a class="btn btn-secondary text-dark" href="PersonalEditar" role="button">Agregar</a>
     </div>
     <div class="col-4 mb-3">
-        <form class="form-inline">
+        <EditForm Model=@busqueda>
             <div class="form-group">
-                <button class="btn btn-secondary" href="#" role="button">
+                <button class="btn btn-secondary" @onclick="() => buscar(busqueda.Texto)" role="button">
                     <i class="oi oi-magnifying-glass text-dark"></i>
                 </button>
-                <input type="text" class="form-control" id="textobuscar" placeholder="Buscar">
+                <InputText id="textobuscar" @bind-Value="busqueda.Texto" class="form-control" placeholder="Buscar" />
             </div>
-        </form>
+        </EditForm>
     </div>
 </div>
 <table class="table table-sm">
     <thead>
         <tr class="bg-primary">
+            <!--<th>ID</th>-->
             <th>Tipo de empleado</th>
             <th>Contraseña</th>
-            <th>Codigo</th>
+            <th>Codigo de empleado</th>
             <th>Nombre</th>
             <th>Puerto</th>
             <th>País</th>
@@ -41,6 +42,7 @@
         @foreach (var usuario in usuarios)
         {
         <tr>
+            <!--<td>@usuario.Id</td>-->
             <td>@usuario.Tipo</td>
             <td>@usuario.Contraseña</td>
             <td>@usuario.Codigo</td>
@@ -65,16 +67,30 @@
 @code
 {
     private List<Usuarios> usuarios = new List<Usuarios>();
+    Busqueda busqueda = new Busqueda();
 
-    protected override async Task OnInitializedAsync()
+    public void lee_usuarios(String Texto)
     {
+        usuarios.Clear();
         String connString = config.GetConnectionString("MySqlNaviera");
         using var connection = new MySqlConnection(connString);
         {
             connection.Open();
-            using var command = new MySqlCommand("SELECT * FROM usuarios;", connection);
+
+            string q = "SELECT * FROM usuarios";
+            if (Texto != "")
+            {
+                q = q + " where tipo_empleado ='" + Texto + "' ";
+                q = q + "or contraseña ='" + Texto + "' ";
+                q = q + "or codigo_empleado ='" + Texto + "' ";
+                q = q + "or nombre ='" + Texto + "' ";
+                q = q + "or puerto ='" + Texto + "' ";
+                q = q + "or pais ='" + Texto + "'";
+            }
+
+            using var command = new MySqlCommand(q, connection);
             using var reader = command.ExecuteReader();
-            while (await reader.ReadAsync())
+            while (reader.Read())
             {
                 var usuario = new Usuarios();
                 usuario.Id = (int)reader["id"];
@@ -90,6 +106,11 @@
         }
     }
 
+    protected override void OnInitialized()
+    {
+        lee_usuarios("");
+    }
+
     private void borrar(int id)
     {
         String connString = config.GetConnectionString("MySqlNaviera");
@@ -103,6 +124,12 @@
                 var resultado = command.ExecuteNonQuery();
             }
         }
+        NavManager.NavigateTo("/Personal");
+    }
+
+    private void buscar(string Texto)
+    {
+        lee_usuarios(Texto);
         NavManager.NavigateTo("/Personal");
     }
 }

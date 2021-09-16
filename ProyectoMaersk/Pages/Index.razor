@@ -6,7 +6,7 @@
 @page "/"
 
 <AuthorizeView>
-    <Authorized>
+    <Authorized Context="autorizado">
 
         <h1>Reservas</h1>
 
@@ -17,28 +17,29 @@
                 <a class="btn btn-secondary text-dark" href="ReservasEditar" role="button">Agregar</a>
             </div>
             <div class="col-4 mb-3">
-                <form class="form-inline">
-                    <div class="form-group">
-                        <button class="btn btn-secondary" href="#" role="button">
+                <EditForm Model=@busqueda>
+                    <div class="form-group"> 
+                        <button class="btn btn-secondary" @onclick="() => buscar(busqueda.Texto)" role="button">
                             <i class="oi oi-magnifying-glass text-dark"></i>
                         </button>
-                        <input type="text" class="form-control" id="textobuscar" placeholder="Buscar">
+                        <InputText id="textobuscar" @bind-Value="busqueda.Texto" class="form-control" placeholder="Buscar" />
                     </div>
-                </form>
+                </EditForm>
             </div>
         </div>
         <table class="table table-sm">
             <thead>
                 <tr class="bg-primary">
-                    <th>ID</th>
                     <th>Codigo</th>
                     <th>Empresa</th>
                     <th>Número Tributario</th>
                     <th>Direccion</th>
                     <th>Puerto Origen</th>
                     <th>Pais Origen</th>
+                    <th>Hora de salida</th>
                     <th>Puerto Destino</th>
                     <th>Pais Destino</th>
+                    <th>Hora de llegada</th>
                     <th>Receptor de la carga</th>
                     <th>Contraseña de Recepcion</th>
                     <th>Tipo de Carga</th>
@@ -56,44 +57,45 @@
             <tbody>
                 @foreach (var reserva in reservas)
                 {
-                    <tr>
-                        <td>@reserva.Id</td>
-                        <td>@reserva.Codigo</td>
-                        <td>@reserva.Empresa</td>
-                        <td>@reserva.Nit</td>
-                        <td>@reserva.Direccion</td>
-                        <td>@reserva.Puerto_Origen</td>
-                        <td>@reserva.Pais_Origen</td>
-                        <td>@reserva.Puerto_Destino</td>
-                        <td>@reserva.Pais_Destino</td>
-                        <td>@reserva.Receptor</td>
-                        <td>@reserva.Contraseña_Recepcion</td>
-                        <td>@reserva.Tipo_Carga</td>
-                        <td>@reserva.Descripcion</td>
-                        <td>@reserva.Peso</td>
-                        <td>@reserva.Valor</td>
-                        <td>@reserva.Tipo_Contenedor</td>
-                        <td>
-                            <button class="btn btn-secondary text-dark" href="#" role="button">
-                                <i class="oi oi-document text-dark"></i>
-                            </button>
-                        </td>
-                        <td>
-                            <button class="btn btn-secondary text-dark" href="#" role="button">
-                                <i class="oi oi-data-transfer-download text-dark"></i>
-                            </button>
-                        </td>
-                        <td>
-                            <a class="btn btn-secondary text-dark" href="ReservasEditar?Id=@reserva.Id" role="button">
-                                <i class="oi oi-pencil text-dark"></i>
-                            </a>
-                        </td>
-                        <td>
-                            <button class="btn btn-secondary" @onclick="() => borrar(reserva.Id)" role="button">
-                                <i class="oi oi-trash text-dark"></i>
-                            </button>
-                        </td>
-                    </tr>
+                <tr>
+                    <td>@reserva.Codigo</td>
+                    <td>@reserva.Empresa</td>
+                    <td>@reserva.Nit</td>
+                    <td>@reserva.Direccion</td>
+                    <td>@reserva.Puerto_Origen</td>
+                    <td>@reserva.Pais_Origen</td>
+                    <td>@reserva.Hora_Salida</td>
+                    <td>@reserva.Puerto_Destino</td>
+                    <td>@reserva.Pais_Destino</td>
+                    <td>@reserva.Hora_Llegada</td>
+                    <td>@reserva.Receptor</td>
+                    <td>@reserva.Contraseña_Recepcion</td>
+                    <td>@reserva.Tipo_Carga</td>
+                    <td>@reserva.Descripcion</td>
+                    <td>@reserva.Peso</td>
+                    <td>@reserva.Valor</td>
+                    <td>@reserva.Tipo_Contenedor</td>
+                    <td>
+                        <button class="btn btn-secondary text-dark" href="#" role="button">
+                            <i class="oi oi-document text-dark"></i>
+                        </button>
+                    </td>
+                    <td>
+                        <button class="btn btn-secondary text-dark" href="#" role="button">
+                            <i class="oi oi-data-transfer-download text-dark"></i>
+                        </button>
+                    </td>
+                    <td>
+                        <a class="btn btn-secondary text-dark" href="ReservasEditar?Id=@reserva.Id" role="button">
+                            <i class="oi oi-pencil text-dark"></i>
+                        </a>
+                    </td>
+                    <td>
+                        <button class="btn btn-secondary" @onclick="() => borrar(reserva.Id)" role="button">
+                            <i class="oi oi-trash text-dark"></i>
+                        </button>
+                    </td>
+                </tr>
                 }
             </tbody>
         </table>
@@ -128,27 +130,52 @@
 @code
 {
     private List<Reserva> reservas = new List<Reserva>();
+    Busqueda busqueda = new Busqueda();
 
-    protected override async Task OnInitializedAsync()
+    public void lee_reservas(string Texto)
     {
+        reservas.Clear();
         String connString = config.GetConnectionString("MySqlNaviera");
         using var connection = new MySqlConnection(connString);
         {
             connection.Open();
-            using var command = new MySqlCommand("SELECT * FROM reserva_contenedor;", connection);
+
+            string q = "SELECT * FROM reserva_contenedor";
+            if (Texto != "")
+            {
+                q = q + " where codigo_contenedor ='" + Texto + "' ";
+                q = q + "or empresa ='" + Texto + "' ";
+                q = q + "or nit ='" + Texto + "' ";
+                q = q + "or direccion ='" + Texto + "' ";
+                q = q + "or puerto_origen ='" + Texto + "' ";
+                q = q + "or pais_origen ='" + Texto + "' ";
+                q = q + "or puerto_destino ='" + Texto + "' ";
+                q = q + "or pais_destino ='" + Texto + "' ";
+                q = q + "or receptor ='" + Texto + "' ";
+                q = q + "or contraseña_recepcion ='" + Texto + "' ";
+                q = q + "or tipo_carga ='" + Texto + "' ";
+                q = q + "or descripcion_carga ='" + Texto + "' ";
+                q = q + "or peso_carga ='" + Texto + "' ";
+                q = q + "or valor_carga ='" + Texto + "' ";
+                q = q + "or tipo_contenedor ='" + Texto + "'";
+            }
+
+            using var command = new MySqlCommand(q, connection);
             using var reader = command.ExecuteReader();
-            while (await reader.ReadAsync())
+            while (reader.Read())
             {
                 var reserva = new Reserva();
-                reserva.Id = (int) reader["id"];
+                reserva.Id = (int)reader["id"];
                 reserva.Codigo = reader["Codigo_contenedor"].ToString();
                 reserva.Empresa = reader["Empresa"].ToString();
                 reserva.Nit = reader["Nit"].ToString();
                 reserva.Direccion = reader["Direccion"].ToString();
                 reserva.Puerto_Origen = reader["Puerto_Origen"].ToString();
                 reserva.Pais_Origen = reader["Pais_Origen"].ToString();
+                reserva.Hora_Salida = ((DateTime)reader["Hora_Salida"]).ToString("dd/MM/yyyy hh:mm tt"); //convierte lo que la base de datos trae a tipo DateTime de C# y le aplica el formato
                 reserva.Puerto_Destino = reader["Puerto_Destino"].ToString();
                 reserva.Pais_Destino = reader["Pais_Destino"].ToString();
+                reserva.Hora_Llegada = ((DateTime)reader["Hora_Llegada"]).ToString("dd/MM/yyyy hh:mm tt");
                 reserva.Receptor = reader["Receptor"].ToString();
                 reserva.Contraseña_Recepcion = reader["Contraseña_Recepcion"].ToString();
                 reserva.Tipo_Carga = reader["Tipo_Carga"].ToString();
@@ -159,6 +186,11 @@
                 reservas.Add(reserva);
             }
         }
+    }
+
+    protected override void OnInitialized()
+    {
+        lee_reservas("");
     }
 
     private void borrar(int id)
@@ -174,6 +206,12 @@
                 var resultado = command.ExecuteNonQuery();
             }
         }
+        NavManager.NavigateTo("/");
+    }
+
+    private void buscar(string Texto)
+    {
+        lee_reservas(Texto);
         NavManager.NavigateTo("/");
     }
 }

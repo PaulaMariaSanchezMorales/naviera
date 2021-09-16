@@ -112,19 +112,33 @@ using Clases;
         }
         #pragma warning restore 1998
 #nullable restore
-#line 66 "C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\Pages\Personal.razor"
+#line 68 "C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\Pages\Personal.razor"
  
     private List<Usuarios> usuarios = new List<Usuarios>();
+    Busqueda busqueda = new Busqueda();
 
-    protected override async Task OnInitializedAsync()
+    public void lee_usuarios(String Texto)
     {
+        usuarios.Clear();
         String connString = config.GetConnectionString("MySqlNaviera");
         using var connection = new MySqlConnection(connString);
         {
             connection.Open();
-            using var command = new MySqlCommand("SELECT * FROM usuarios;", connection);
+
+            string q = "SELECT * FROM usuarios";
+            if (Texto != "")
+            {
+                q = q + " where tipo_empleado ='" + Texto + "' ";
+                q = q + "or contraseña ='" + Texto + "' ";
+                q = q + "or codigo_empleado ='" + Texto + "' ";
+                q = q + "or nombre ='" + Texto + "' ";
+                q = q + "or puerto ='" + Texto + "' ";
+                q = q + "or pais ='" + Texto + "'";
+            }
+
+            using var command = new MySqlCommand(q, connection);
             using var reader = command.ExecuteReader();
-            while (await reader.ReadAsync())
+            while (reader.Read())
             {
                 var usuario = new Usuarios();
                 usuario.Id = (int)reader["id"];
@@ -140,6 +154,11 @@ using Clases;
         }
     }
 
+    protected override void OnInitialized()
+    {
+        lee_usuarios("");
+    }
+
     private void borrar(int id)
     {
         String connString = config.GetConnectionString("MySqlNaviera");
@@ -153,6 +172,12 @@ using Clases;
                 var resultado = command.ExecuteNonQuery();
             }
         }
+        NavManager.NavigateTo("/Personal");
+    }
+
+    private void buscar(string Texto)
+    {
+        lee_usuarios(Texto);
         NavManager.NavigateTo("/Personal");
     }
 

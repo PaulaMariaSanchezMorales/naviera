@@ -200,14 +200,16 @@ using Clases;
             }
             else
             {
+                usuario.Codigo = Guid.NewGuid().ToString("N").Substring(0, 6); //generar numeros random, es una funcion ya por los sistemas para generar un id unico
+
                 q = q + "INSERT INTO usuarios(tipo_empleado, contraseña, codigo_empleado, nombre, puerto, pais)" +
-                        "values ('" + usuario.Tipo + "','" + usuario.Contraseña + "','" + usuario.Codigo + "','" + usuario.Nombre + "','" + usuario.Puerto + "','" + usuario.Pais + "')";
+                    "values ('" + usuario.Tipo + "','" + usuario.Contraseña + "','" + usuario.Codigo + "','" + usuario.Nombre + "','" + usuario.Puerto + "','" + usuario.Pais + "')";
             }
             using var command = new MySqlCommand(q, connection);
             var resultado = command.ExecuteNonQuery();
         }
 
-        NavManager.NavigateTo("/");
+        NavManager.NavigateTo("/Personal");
     }
 
     protected override void OnInitialized()

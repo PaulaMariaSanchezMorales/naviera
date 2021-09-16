@@ -4,6 +4,7 @@
 @using Clases
 @inject Microsoft.Extensions.Configuration.IConfiguration config
 @inject NavigationManager NavManager
+
 @page "/ReservasEditar"
 
 <h1>Reservas</h1>
@@ -13,12 +14,8 @@
 <div class="container">
     <EditForm Model=@reserva OnSubmit="@grabar">
         <div class="form-group">
-            <label for="id">ID</label>
-            <InputNumber @bind-Value="reserva.Id" readonly class="form-control" id="id"/>
-        </div>
-        <div class="form-group">
             <label for="codigo">Codigo</label>
-            <InputText @bind-Value="reserva.Codigo" readonly class="form-control" id="codigo"/>
+            <InputText @bind-Value="reserva.Codigo" readonly class="form-control" id="codigo" />
         </div>
         <div class="form-group">
             <label for="empresa">Empresa</label>
@@ -51,6 +48,10 @@
             </InputSelect>
         </div>
         <div class="form-group">
+            <label for="horasalida">Fecha y hora de salida</label>
+            <InputText type="datetime-local" @bind-Value="reserva.Hora_Salida" class="form-control" id="horasalida" />
+        </div>
+        <div class="form-group">
             <label for="paisdestino">Pais Destino</label>
             <InputSelect @bind-Value="reserva.Pais_Destino" class="form-control" id="paisdestino">
                 @foreach (var pais in Paises_Destino)
@@ -69,11 +70,15 @@
             </InputSelect>
         </div>
         <div class="form-group">
+            <label for="horallegada">Fecha y hora de llegada</label>
+            <InputText type="datetime-local" @bind-Value="reserva.Hora_Llegada" class="form-control" id="horallegada" />
+        </div>
+        <div class="form-group">
             <label for="receptor">Receptor de la Carga</label>
             <InputText id="receptor" @bind-Value="reserva.Receptor" class="form-control" />
         </div>
         <div class="form-group">
-            <label for="contrasenia">Contraseña de Recepcion</label>">
+            <label for="contrasenia">Contraseña de Recepcion</label>
             <input type="text" value="@reserva.Contraseña_Recepcion" readonly class="form-control" id="contrasenia">
         </div>
         <div class="form-group">
@@ -119,6 +124,8 @@
 {
     int Id = 0;
     Reserva reserva = new Reserva();
+
+    //String hora = "12:30";
 
     List<Pais> Paises_Origen = new List<Pais>();
     List<Pais> Paises_Destino = new List<Pais>();
@@ -216,25 +223,39 @@
         String connString = config.GetConnectionString("MySqlNaviera");
         using var connection = new MySqlConnection(connString);
         {
+            String q = "";
+
             connection.Open();
-            String q = "UPDATE reserva_contenedor SET ";
-            q = q + "empresa = '" + reserva.Empresa + "',";
-            q = q + " nit = '" + reserva.Nit + "',";
-            q = q + " direccion = '" + reserva.Direccion + "',";
-            q = q + " puerto_origen = '" + reserva.Puerto_Origen + "',";
-            q = q + " pais_origen = '" + reserva.Pais_Origen + "',";
-            q = q + " puerto_destino = '" + reserva.Puerto_Destino + "',";
-            q = q + " pais_destino = '" + reserva.Pais_Destino + "',";
-            q = q + " receptor = '" + reserva.Receptor + "',";
-            q = q + " contraseña_recepcion = '" + reserva.Contraseña_Recepcion + "',";
-            q = q + " tipo_carga = '" + reserva.Tipo_Carga + "',";
-            q = q + " descripcion_carga = '" + reserva.Descripcion + "',";
-            q = q + " peso_carga = '" + reserva.Peso + "',";
-            q = q + " valor_carga = '" + reserva.Valor + "',";
-            q = q + " tipo_contenedor = '" + reserva.Tipo_Contenedor + "'";
+            if (reserva.Id > 0)
+            {
+                q = "UPDATE reserva_contenedor SET ";
+                q = q + "empresa = '" + reserva.Empresa + "',";
+                q = q + " nit = '" + reserva.Nit + "',";
+                q = q + " direccion = '" + reserva.Direccion + "',";
+                q = q + " puerto_origen = '" + reserva.Puerto_Origen + "',";
+                q = q + " pais_origen = '" + reserva.Pais_Origen + "',";
+                q = q + " hora_salida = '" + reserva.Hora_Salida + "',";
+                q = q + " puerto_destino = '" + reserva.Puerto_Destino + "',";
+                q = q + " pais_destino = '" + reserva.Pais_Destino + "',";
+                q = q + " hora_llegada = '" + reserva.Hora_Llegada + "',";
+                q = q + " receptor = '" + reserva.Receptor + "',";
+                q = q + " contraseña_recepcion = '" + reserva.Contraseña_Recepcion + "',";
+                q = q + " tipo_carga = '" + reserva.Tipo_Carga + "',";
+                q = q + " descripcion_carga = '" + reserva.Descripcion + "',";
+                q = q + " peso_carga = '" + reserva.Peso + "',";
+                q = q + " valor_carga = '" + reserva.Valor + "',";
+                q = q + " tipo_contenedor = '" + reserva.Tipo_Contenedor + "'";
 
-            q = q + " where codigo_contenedor = '" + reserva.Codigo + "'";
+                q = q + " where id = '" + reserva.Id + "'";
+            }
+            else
+            {
+                reserva.Codigo = reserva.Tipo_Contenedor.Substring(0, 2) + reserva.Puerto_Origen + reserva.Pais_Origen + reserva.Pais_Destino; //substring(posicion que empieza, longitud)
+                reserva.Contraseña_Recepcion = Guid.NewGuid().ToString("N").Substring(0, 6); //generar numeros random, es una funcion ya por los sistemas para generar un id unico
 
+                q = q + "INSERT INTO reserva_contenedor(codigo_contenedor, empresa, nit, direccion, puerto_origen, pais_origen, hora_salida, puerto_destino, pais_destino, hora_llegada, receptor, contraseña_recepcion, tipo_carga, descripcion_carga, peso_carga, valor_carga, tipo_contenedor)" +
+                    " values ('" + reserva.Codigo + "','" + reserva.Empresa + "','" + reserva.Nit + "','" + reserva.Direccion + "','" + reserva.Puerto_Origen + "','" + reserva.Pais_Origen + "','" + reserva.Hora_Salida + "','" + reserva.Puerto_Destino + "','" + reserva.Pais_Destino + "','" + reserva.Hora_Llegada + "','" + reserva.Receptor + "','" + reserva.Contraseña_Recepcion + "','" + reserva.Tipo_Carga + "','" + reserva.Descripcion + "','" + reserva.Peso + "','" + reserva.Valor + "','" + reserva.Tipo_Contenedor + "')";
+            }
             using var command = new MySqlCommand(q, connection);
             var resultado = command.ExecuteNonQuery();
         }
@@ -265,15 +286,17 @@
             using var reader = command.ExecuteReader();
             while (reader.Read())
             {
-                reserva.Id = (int) reader["id"];
+                reserva.Id = (int)reader["id"];
                 reserva.Codigo = reader["Codigo_contenedor"].ToString();
                 reserva.Empresa = reader["Empresa"].ToString();
                 reserva.Nit = reader["Nit"].ToString();
                 reserva.Direccion = reader["Direccion"].ToString();
                 reserva.Puerto_Origen = reader["Puerto_Origen"].ToString();
                 reserva.Pais_Origen = reader["Pais_Origen"].ToString();
+                reserva.Hora_Salida = reader["Hora_Salida"].ToString();
                 reserva.Puerto_Destino = reader["Puerto_Destino"].ToString();
                 reserva.Pais_Destino = reader["Pais_Destino"].ToString();
+                reserva.Hora_Llegada = reader["Hora_Llegada"].ToString();
                 reserva.Receptor = reader["Receptor"].ToString();
                 reserva.Contraseña_Recepcion = reader["Contraseña_Recepcion"].ToString();
                 reserva.Tipo_Carga = reader["Tipo_Carga"].ToString();

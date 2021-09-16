@@ -14,8 +14,10 @@ namespace ProyectoMaersk.Clases
         public String Direccion { get; set; }
         public String Puerto_Origen { get; set; }
         public String Pais_Origen { get; set; }
+        public String Hora_Salida { get; set; }
         public String Puerto_Destino { get; set; }
         public String Pais_Destino { get; set; }
+        public String Hora_Llegada { get; set; }
         public String Receptor { get; set; }
         public String Contraseña_Recepcion { get; set; }
         public String Tipo_Carga { get; set; }

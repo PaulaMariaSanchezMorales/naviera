@@ -1,46 +1,133 @@
-﻿@page "/Seguimiento"
+﻿@using Microsoft.Extensions.Configuration
+@using MySqlConnector
+@using Clases
+@inject Microsoft.Extensions.Configuration.IConfiguration config
+@inject NavigationManager NavManager
+@page "/Seguimiento"
 
 <h1>Seguimiento</h1>
 
 <p>Visualice la ruta de su contenedor</p>
 
 <div class="row">
-    <div class="col-2"></div>
-    <div class="col-4 mb-3">
-        <form class="form-inline">
-            <div class="form-group">
-                <button class="btn btn-secondary" href="#" role="button">
-                    <i class="oi oi-magnifying-glass text-black-50"></i>
-                </button>
-                <input type="text" class="form-control" id="codigo" placeholder="Codigo">
+    <div class="col-sm-1"></div>
+    <div class="col-sm-10 mb-3">
+        <EditForm Model="@busqueda" class="form-inline">
+            <div class="form-group col-sm-4">
+                <label for="textobuscar">Código de contenedor / Contraseña de recepción</label>
             </div>
-        </form>
-    </div>
-    <div class="col-4 mb-3">
-        <form class="form-inline">
-            <div class="form-group">
-                <button class="btn btn-secondary" href="#" role="button">
-                    <i class="oi oi-magnifying-glass text-black-50"></i>
+            <div class="form-group col-sm-8">
+                <button class="btn btn-secondary" @onclick="() => buscar(busqueda.Texto)" role="button">
+                    <i class="oi oi-magnifying-glass text-dark"></i>
                 </button>
-                <input type="text" class="form-control" id="contrasenia" placeholder="Contraseña">
+                <InputText id="textobuscar" @bind-Value="busqueda.Texto" class="form-control" placeholder="Buscar" />
             </div>
-        </form>
+        </EditForm>
     </div>
-    <div class="col-2"></div>
+    <div class="col-sm-1"></div>
 </div>
 <div class="row">
     <div class="col-1"></div>
     <div class="col-8">
-        <iframe class="custom-shadow" id="map-canvas" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" style="width:100%; height:800px;"
-                src="https://www.google.com/maps?hl=en&amp;q=Bogota,+Colombia/Santo+Tom%C3%A1s+de+Castilla&amp;t=&amp;ie=UTF8&amp;iwloc=B&amp;output=embed">
-        </iframe>
+        @if (reserva.Puerto_Origen != "" && reserva.Puerto_Destino != "")
+        {
+            <iframe class="custom-shadow" id="map-canvas" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" style="width:100%; height:800px;"
+                    src="Prueba.html?loc1=@localizacion_origen&loc2=@localizacion_destino">
+                <!--pasando parámetros a html-->
+            </iframe>
+        }
+        else
+        {
+            <iframe class="custom-shadow" id="map-canvas" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" style="width:100%; height:800px;"
+                    src="Prueba.html">
+                <!--pasando parámetros a html-->
+            </iframe>
+        }
     </div>
     <div class="col-3">
-        <h2>Hora de Salida:</h2>
-        <h4>14 Enero 2022 - 16:22</h4>
+        <h2>Fecha y hora de Salida:</h2>
+        <h4>@reserva.Hora_Salida</h4>
         <br />
-        <h2>Hora de Llegada:</h2>
-        <h4>18 Enero 2022 - 10:00</h4>
+        <h2>Fecha y hora de Llegada:</h2>
+        <h4>@reserva.Hora_Llegada</h4>
+        <h2>Fecha y hora de Salida:</h2>
+        <h4>@reserva.Hora_Salida</h4>
+        <br />
+        <h2>Fecha y hora de Llegada:</h2>
+        <h4>@reserva.Hora_Llegada</h4>
     </div>
 </div>
 
+@code
+{
+    Reserva reserva = new Reserva();
+    Busqueda busqueda = new Busqueda();
+
+    String localizacion_origen = "";
+    String localizacion_destino = "";
+
+    public void lee_reservas(string Texto)
+    {
+        String connString = config.GetConnectionString("MySqlNaviera");
+        using var connection = new MySqlConnection(connString);
+        {
+
+
+            string q = "";
+
+            reserva.Puerto_Origen = "";
+            reserva.Puerto_Destino = "";
+            reserva.Hora_Salida = "";
+            reserva.Hora_Llegada = "";
+
+            localizacion_origen = "";
+            localizacion_destino = "";
+
+            q = "SELECT * FROM reserva_contenedor";
+            q = q + " where codigo_contenedor ='" + Texto + "' ";
+            q = q + "or contraseña_recepcion ='" + Texto + "'";
+
+            connection.Open();
+            using var command = new MySqlCommand(q, connection);
+            using var reader = command.ExecuteReader(); //ejecuta la búsqueda, va a la base de datos
+            while (reader.Read())
+            {
+                reserva.Puerto_Origen = reader["Puerto_Origen"].ToString();
+                reserva.Hora_Salida = ((DateTime)reader["Hora_Salida"]).ToString("dd/MM/yyyy hh:mm tt"); //convierte lo que la base de datos trae a tipo DateTime de C# y le aplica el formato
+                reserva.Puerto_Destino = reader["Puerto_Destino"].ToString();
+                reserva.Hora_Llegada = ((DateTime)reader["Hora_Llegada"]).ToString("dd/MM/yyyy hh:mm tt");
+            }
+            connection.Close();
+
+            connection.Open();
+            String q1 = "SELECT localizacion from puertos where codigo = '" + reserva.Puerto_Origen + "'";
+            using var command1 = new MySqlCommand(q1, connection);
+            using var reader1 = command1.ExecuteReader();
+            while (reader1.Read())
+            {
+                localizacion_origen = reader1["localizacion"].ToString();
+            }
+            connection.Close();
+
+            connection.Open();
+            String q2 = "SELECT localizacion from puertos where codigo = '" + reserva.Puerto_Destino + "'";
+            using var command2 = new MySqlCommand(q2, connection);
+            using var reader2 = command2.ExecuteReader();
+            while (reader2.Read())
+            {
+                localizacion_destino = reader2["localizacion"].ToString();
+            }
+            connection.Close();
+        }
+    }
+
+    protected override void OnInitialized()
+    {
+        lee_reservas("");
+    }
+    private void buscar(string Texto)
+    {
+        lee_reservas(Texto);
+        NavManager.NavigateTo("/Seguimiento");
+    }
+}

@@ -9,5 +9,6 @@ namespace ProyectoMaersk.Clases
     {
         public String Codigo { get; set; }
         public String Nombre { get; set; }
+        public String Localizacion { get; set; }
     }
 }
