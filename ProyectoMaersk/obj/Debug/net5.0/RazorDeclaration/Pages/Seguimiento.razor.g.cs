@@ -112,7 +112,7 @@ using Clases;
         }
         #pragma warning restore 1998
 #nullable restore
-#line 62 "C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\Pages\Seguimiento.razor"
+#line 60 "C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\Pages\Seguimiento.razor"
  
     Reserva reserva = new Reserva();
     Busqueda busqueda = new Busqueda();
@@ -133,6 +133,8 @@ using Clases;
             reserva.Puerto_Destino = "";
             reserva.Hora_Salida = "";
             reserva.Hora_Llegada = "";
+            reserva.Empresa = "";
+            reserva.Descripcion = "";
 
             localizacion_origen = "";
             localizacion_destino = "";
@@ -150,6 +152,8 @@ using Clases;
                 reserva.Hora_Salida = ((DateTime)reader["Hora_Salida"]).ToString("dd/MM/yyyy hh:mm tt"); //convierte lo que la base de datos trae a tipo DateTime de C# y le aplica el formato
                 reserva.Puerto_Destino = reader["Puerto_Destino"].ToString();
                 reserva.Hora_Llegada = ((DateTime)reader["Hora_Llegada"]).ToString("dd/MM/yyyy hh:mm tt");
+                reserva.Empresa = reader["Empresa"].ToString();
+                reserva.Descripcion = reader["Descripcion_Carga"].ToString();
             }
             connection.Close();
 

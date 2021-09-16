@@ -7,14 +7,14 @@
 
 <h1>Personal</h1>
 
-<p>Listado de personal</p>
+<h4>Listado de personal</h4>
 
 <div class="row">
-    <div class="col-8 mb-3">
+    <div class="col-10 mb-3">
         <a class="btn btn-secondary text-dark" href="PersonalEditar" role="button">Agregar</a>
     </div>
-    <div class="col-4 mb-3">
-        <EditForm Model=@busqueda>
+    <div class="col-sm-2 mb-3">
+        <EditForm Model="@busqueda" class="form-inline">
             <div class="form-group">
                 <button class="btn btn-secondary" @onclick="() => buscar(busqueda.Texto)" role="button">
                     <i class="oi oi-magnifying-glass text-dark"></i>

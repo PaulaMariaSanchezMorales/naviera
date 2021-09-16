@@ -10,15 +10,15 @@
 
         <h1>Reservas</h1>
 
-        <p>Listado de reservas</p>
+        <h4>Listado de reservas</h4>
 
         <div class="row">
-            <div class="col-8 mb-3">
+            <div class="col-sm-10 mb-3">
                 <a class="btn btn-secondary text-dark" href="ReservasEditar" role="button">Agregar</a>
             </div>
-            <div class="col-4 mb-3">
-                <EditForm Model=@busqueda>
-                    <div class="form-group"> 
+            <div class="col-sm-2 mb-3">
+                <EditForm Model="@busqueda" class="form-inline">
+                    <div class="form-group">
                         <button class="btn btn-secondary" @onclick="() => buscar(busqueda.Texto)" role="button">
                             <i class="oi oi-magnifying-glass text-dark"></i>
                         </button>
@@ -101,11 +101,7 @@
         </table>
         <div class="row">
             <div class="col-12 text-center">
-                <button class="btn btn-secondary text-dark" href="#" role="button">
-                    <i class="oi oi-grid-four-up text-dark"></i>
-                    Descargar a Excel
-                </button>
-                <button class="btn btn-secondary text-dark" href="#" role="button">
+                <button class="btn btn-secondary btn-lg text-dark" href="#" role="button">
                     <i class="oi oi-data-transfer-download text-dark"></i>
                     PDF
                 </button>

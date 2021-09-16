@@ -7,7 +7,7 @@
 
 <h1>Seguimiento</h1>
 
-<p>Visualice la ruta de su contenedor</p>
+<h4>Visualice la ruta de su contenedor</h4>
 
 <div class="row">
     <div class="col-sm-1"></div>
@@ -45,16 +45,14 @@
         }
     </div>
     <div class="col-3">
-        <h2>Fecha y hora de Salida:</h2>
-        <h4>@reserva.Hora_Salida</h4>
-        <br />
-        <h2>Fecha y hora de Llegada:</h2>
-        <h4>@reserva.Hora_Llegada</h4>
-        <h2>Fecha y hora de Salida:</h2>
-        <h4>@reserva.Hora_Salida</h4>
-        <br />
-        <h2>Fecha y hora de Llegada:</h2>
-        <h4>@reserva.Hora_Llegada</h4>
+        <h4>Nombre de la empresa:</h4>
+        <div class="shadow p-4 mb-5 bg-white rounded">@reserva.Empresa</div>
+        <h4>Fecha y hora de salida:</h4>
+        <div class="shadow p-4 mb-5 bg-white rounded">@reserva.Hora_Salida</div>
+        <h4>Fecha y hora de llegada:</h4>
+        <div class="shadow p-4 mb-5 bg-white rounded">@reserva.Hora_Llegada</div>
+        <h4>Descripción de la carga:</h4>
+        <div class="shadow p-4 mb-5 bg-white rounded">@reserva.Descripcion</div>
     </div>
 </div>
 
@@ -79,6 +77,8 @@
             reserva.Puerto_Destino = "";
             reserva.Hora_Salida = "";
             reserva.Hora_Llegada = "";
+            reserva.Empresa = "";
+            reserva.Descripcion = "";
 
             localizacion_origen = "";
             localizacion_destino = "";
@@ -96,6 +96,8 @@
                 reserva.Hora_Salida = ((DateTime)reader["Hora_Salida"]).ToString("dd/MM/yyyy hh:mm tt"); //convierte lo que la base de datos trae a tipo DateTime de C# y le aplica el formato
                 reserva.Puerto_Destino = reader["Puerto_Destino"].ToString();
                 reserva.Hora_Llegada = ((DateTime)reader["Hora_Llegada"]).ToString("dd/MM/yyyy hh:mm tt");
+                reserva.Empresa = reader["Empresa"].ToString();
+                reserva.Descripcion = reader["Descripcion_Carga"].ToString();
             }
             connection.Close();
 
