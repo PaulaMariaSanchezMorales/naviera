@@ -335,3 +335,7 @@ C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMa
 C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\obj\Debug\net5.0\Razor\Pages\ReservasEditar.razor.g.cs
 C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\obj\Debug\net5.0\RazorDeclaration\Pages\PersonalEditar.razor.g.cs
 C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\obj\Debug\net5.0\Razor\Pages\PersonalEditar.razor.g.cs
+C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\obj\Debug\net5.0\RazorDeclaration\Shared\BlankLayout.razor.g.cs
+C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\obj\Debug\net5.0\Razor\Shared\BlankLayout.razor.g.cs
+C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\obj\Debug\net5.0\RazorDeclaration\Pages\ListaReservas.razor.g.cs
+C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\obj\Debug\net5.0\Razor\Pages\ListaReservas.razor.g.cs

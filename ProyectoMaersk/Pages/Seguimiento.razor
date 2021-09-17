@@ -90,7 +90,7 @@
             connection.Open();
             using var command = new MySqlCommand(q, connection);
             using var reader = command.ExecuteReader(); //ejecuta la búsqueda, va a la base de datos
-            while (reader.Read())
+            while (reader.Read()) //variables que leerá para poder mostrar a la hora de bucar el contenedor
             {
                 reserva.Puerto_Origen = reader["Puerto_Origen"].ToString();
                 reserva.Hora_Salida = ((DateTime)reader["Hora_Salida"]).ToString("dd/MM/yyyy hh:mm tt"); //convierte lo que la base de datos trae a tipo DateTime de C# y le aplica el formato

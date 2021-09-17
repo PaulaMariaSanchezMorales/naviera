@@ -37,6 +37,7 @@
                     <option value="@pais.Codigo">@pais.Nombre</option>
                 }
             </InputSelect>
+            <!--por cada país que exista, mostrar en listado los códigos y nombres de los países disponibles-->
         </div>
         <div class="form-group">
             <label for="puertoorigen">Puerto Origen</label>
@@ -127,7 +128,7 @@
 
     //String hora = "12:30";
 
-    List<Pais> Paises_Origen = new List<Pais>();
+    List<Pais> Paises_Origen = new List<Pais>(); //listado de los países existentes
     List<Pais> Paises_Destino = new List<Pais>();
 
     List<Puerto> Puertos_Origen = new List<Puerto>();

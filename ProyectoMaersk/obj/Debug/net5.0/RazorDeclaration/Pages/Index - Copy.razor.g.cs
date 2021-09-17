@@ -83,28 +83,28 @@ using ProyectoMaersk.Shared;
 #line hidden
 #nullable disable
 #nullable restore
-#line 1 "C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\Pages\Seguimiento.razor"
+#line 1 "C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\Pages\Index - Copy.razor"
 using Microsoft.Extensions.Configuration;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 2 "C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\Pages\Seguimiento.razor"
+#line 2 "C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\Pages\Index - Copy.razor"
 using MySqlConnector;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 3 "C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\Pages\Seguimiento.razor"
+#line 3 "C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\Pages\Index - Copy.razor"
 using Clases;
 
 #line default
 #line hidden
 #nullable disable
-    [Microsoft.AspNetCore.Components.RouteAttribute("/Seguimiento")]
-    public partial class Seguimiento : Microsoft.AspNetCore.Components.ComponentBase
+    [Microsoft.AspNetCore.Components.RouteAttribute("/")]
+    public partial class Index___Copy : Microsoft.AspNetCore.Components.ComponentBase
     {
         #pragma warning disable 1998
         protected override void BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
@@ -112,81 +112,92 @@ using Clases;
         }
         #pragma warning restore 1998
 #nullable restore
-#line 60 "C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\Pages\Seguimiento.razor"
+#line 129 "C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\Pages\Index - Copy.razor"
  
-    Reserva reserva = new Reserva();
+    private List<Reserva> reservas = new List<Reserva>();
     Busqueda busqueda = new Busqueda();
-
-    String localizacion_origen = "";
-    String localizacion_destino = "";
 
     public void lee_reservas(string Texto)
     {
+        reservas.Clear();
         String connString = config.GetConnectionString("MySqlNaviera");
         using var connection = new MySqlConnection(connString);
         {
-
-
-            string q = "";
-
-            reserva.Puerto_Origen = "";
-            reserva.Puerto_Destino = "";
-            reserva.Hora_Salida = "";
-            reserva.Hora_Llegada = "";
-            reserva.Empresa = "";
-            reserva.Descripcion = "";
-
-            localizacion_origen = "";
-            localizacion_destino = "";
-
-            q = "SELECT * FROM reserva_contenedor";
-            q = q + " where codigo_contenedor ='" + Texto + "' ";
-            q = q + "or contraseña_recepcion ='" + Texto + "'";
-
             connection.Open();
-            using var command = new MySqlCommand(q, connection);
-            using var reader = command.ExecuteReader(); //ejecuta la búsqueda, va a la base de datos
-            while (reader.Read()) //variables que leerá para poder mostrar a la hora de bucar el contenedor
+
+            string q = "SELECT * FROM reserva_contenedor"; //selección de lo que q vaya a devolver
+            if (Texto != "")
             {
+                q = q + " where codigo_contenedor ='" + Texto + "' ";
+                q = q + "or empresa ='" + Texto + "' ";
+                q = q + "or nit ='" + Texto + "' ";
+                q = q + "or direccion ='" + Texto + "' ";
+                q = q + "or puerto_origen ='" + Texto + "' ";
+                q = q + "or pais_origen ='" + Texto + "' ";
+                q = q + "or puerto_destino ='" + Texto + "' ";
+                q = q + "or pais_destino ='" + Texto + "' ";
+                q = q + "or receptor ='" + Texto + "' ";
+                q = q + "or contraseña_recepcion ='" + Texto + "' ";
+                q = q + "or tipo_carga ='" + Texto + "' ";
+                q = q + "or descripcion_carga ='" + Texto + "' ";
+                q = q + "or peso_carga ='" + Texto + "' ";
+                q = q + "or valor_carga ='" + Texto + "' ";
+                q = q + "or tipo_contenedor ='" + Texto + "'";
+            }
+
+            using var command = new MySqlCommand(q, connection);
+            using var reader = command.ExecuteReader(); //devuelve un objeto para poder hacer consultas, en este caso q
+            while (reader.Read())
+            {
+                var reserva = new Reserva();
+                reserva.Id = (int)reader["id"];
+                reserva.Codigo = reader["Codigo_contenedor"].ToString();
+                reserva.Empresa = reader["Empresa"].ToString();
+                reserva.Nit = reader["Nit"].ToString();
+                reserva.Direccion = reader["Direccion"].ToString();
                 reserva.Puerto_Origen = reader["Puerto_Origen"].ToString();
+                reserva.Pais_Origen = reader["Pais_Origen"].ToString();
                 reserva.Hora_Salida = ((DateTime)reader["Hora_Salida"]).ToString("dd/MM/yyyy hh:mm tt"); //convierte lo que la base de datos trae a tipo DateTime de C# y le aplica el formato
                 reserva.Puerto_Destino = reader["Puerto_Destino"].ToString();
+                reserva.Pais_Destino = reader["Pais_Destino"].ToString();
                 reserva.Hora_Llegada = ((DateTime)reader["Hora_Llegada"]).ToString("dd/MM/yyyy hh:mm tt");
-                reserva.Empresa = reader["Empresa"].ToString();
-                reserva.Descripcion = reader["Descripcion_Carga"].ToString();
+                reserva.Receptor = reader["Receptor"].ToString();
+                reserva.Contraseña_Recepcion = reader["Contraseña_Recepcion"].ToString();
+                reserva.Tipo_Carga = reader["Tipo_Carga"].ToString();
+                reserva.Descripcion = reader["Descripcion_carga"].ToString();
+                reserva.Peso = reader["Peso_carga"].ToString();
+                reserva.Valor = reader["Valor_carga"].ToString();
+                reserva.Tipo_Contenedor = reader["Tipo_Contenedor"].ToString();
+                reservas.Add(reserva);
             }
-            connection.Close();
-
-            connection.Open();
-            String q1 = "SELECT localizacion from puertos where codigo = '" + reserva.Puerto_Origen + "'";
-            using var command1 = new MySqlCommand(q1, connection);
-            using var reader1 = command1.ExecuteReader();
-            while (reader1.Read())
-            {
-                localizacion_origen = reader1["localizacion"].ToString();
-            }
-            connection.Close();
-
-            connection.Open();
-            String q2 = "SELECT localizacion from puertos where codigo = '" + reserva.Puerto_Destino + "'";
-            using var command2 = new MySqlCommand(q2, connection);
-            using var reader2 = command2.ExecuteReader();
-            while (reader2.Read())
-            {
-                localizacion_destino = reader2["localizacion"].ToString();
-            }
-            connection.Close();
         }
     }
 
-    protected override void OnInitialized()
+    protected override void OnInitialized() //inicializando la lectura de los datos
     {
         lee_reservas("");
     }
+    //funciones
+    private void borrar(int id)
+    {
+        String connString = config.GetConnectionString("MySqlNaviera");
+        {
+            using var connection = new MySqlConnection(connString);
+            {
+                connection.Open(); //abriendo la conección a la base de datos, si xampp no está abierto no funciona
+                String q = "Delete from reserva_contenedor where id = '" + id + "'";
+
+                using var command = new MySqlCommand(q, connection);
+                var resultado = command.ExecuteNonQuery(); //resultado de las filas afectadas por update, insert y delete
+            }
+        }
+        NavManager.NavigateTo("/"); //dirige de nuevo a la página principal (reservas)
+    }
+
     private void buscar(string Texto)
     {
         lee_reservas(Texto);
-        NavManager.NavigateTo("/Seguimiento");
+        NavManager.NavigateTo("/");
     }
 
 #line default

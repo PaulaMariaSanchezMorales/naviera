@@ -23,13 +23,14 @@
                             <i class="oi oi-magnifying-glass text-dark"></i>
                         </button>
                         <InputText id="textobuscar" @bind-Value="busqueda.Texto" class="form-control" placeholder="Buscar" />
-                    </div>
+                    </div><!--bind value para que realice la función con el texto que el usuario ingresó-->
                 </EditForm>
             </div>
         </div>
         <table class="table table-sm">
             <thead>
                 <tr class="bg-primary">
+                    <!--Agregué un ID-->
                     <th>Codigo</th>
                     <th>Empresa</th>
                     <th>Número Tributario</th>
@@ -57,53 +58,57 @@
             <tbody>
                 @foreach (var reserva in reservas)
                 {
-                <tr>
-                    <td>@reserva.Codigo</td>
-                    <td>@reserva.Empresa</td>
-                    <td>@reserva.Nit</td>
-                    <td>@reserva.Direccion</td>
-                    <td>@reserva.Puerto_Origen</td>
-                    <td>@reserva.Pais_Origen</td>
-                    <td>@reserva.Hora_Salida</td>
-                    <td>@reserva.Puerto_Destino</td>
-                    <td>@reserva.Pais_Destino</td>
-                    <td>@reserva.Hora_Llegada</td>
-                    <td>@reserva.Receptor</td>
-                    <td>@reserva.Contraseña_Recepcion</td>
-                    <td>@reserva.Tipo_Carga</td>
-                    <td>@reserva.Descripcion</td>
-                    <td>@reserva.Peso</td>
-                    <td>@reserva.Valor</td>
-                    <td>@reserva.Tipo_Contenedor</td>
-                    <td>
-                        <button class="btn btn-secondary text-dark" href="#" role="button">
-                            <i class="oi oi-document text-dark"></i>
-                        </button>
-                    </td>
-                    <td>
-                        <button class="btn btn-secondary text-dark" href="#" role="button">
-                            <i class="oi oi-data-transfer-download text-dark"></i>
-                        </button>
-                    </td>
-                    <td>
-                        <a class="btn btn-secondary text-dark" href="ReservasEditar?Id=@reserva.Id" role="button">
-                            <i class="oi oi-pencil text-dark"></i>
-                        </a>
-                    </td>
-                    <td>
-                        <button class="btn btn-secondary" @onclick="() => borrar(reserva.Id)" role="button">
-                            <i class="oi oi-trash text-dark"></i>
-                        </button>
-                    </td>
-                </tr>
+                    <tr>
+                        <!--Agregué un ID que en la parte gráfica está oculto porque el código de contenedor que parecía ser la llave primaria no iba a ser única, por lo que el ID es un valor único autogenerado por la base de datos-->
+                        <td>@reserva.Codigo</td><!--valor autogenerado por la base de datos, con los requerimientos solicitados-->
+                        <td>@reserva.Empresa</td>
+                        <td>@reserva.Nit</td>
+                        <td>@reserva.Direccion</td>
+                        <td>@reserva.Puerto_Origen</td>
+                        <td>@reserva.Pais_Origen</td>
+                        <td>@reserva.Hora_Salida</td>
+                        <td>@reserva.Puerto_Destino</td>
+                        <td>@reserva.Pais_Destino</td>
+                        <td>@reserva.Hora_Llegada</td>
+                        <td>@reserva.Receptor</td>
+                        <td>@reserva.Contraseña_Recepcion</td> <!--valor autogenerado por la base de datos-->
+                        <td>@reserva.Tipo_Carga</td>
+                        <td>@reserva.Descripcion</td>
+                        <td>@reserva.Peso</td>
+                        <td>@reserva.Valor</td>
+                        <td>@reserva.Tipo_Contenedor</td>
+                        <td>
+                            <button class="btn btn-secondary text-dark" href="#" role="button">
+                                <i class="oi oi-document text-dark"></i>
+                            </button>
+                        </td>
+                        <td>
+                            <button class="btn btn-secondary text-dark" href="#" role="button">
+                                <i class="oi oi-data-transfer-download text-dark"></i>
+                            </button>
+                        </td>
+                        <td>
+                            <a class="btn btn-secondary text-dark" href="ReservasEditar?Id=@reserva.Id" role="button">
+                                <i class="oi oi-pencil text-dark"></i>
+                            </a>
+                        </td>
+                        <td>
+                            <button class="btn btn-secondary" @onclick="() => borrar(reserva.Id)" role="button">
+                                <i class="oi oi-trash text-dark"></i>
+                            </button>
+                        </td>
+                    </tr>
                 }
             </tbody>
         </table>
         <div class="row">
             <div class="col-12 text-center">
-                <button class="btn btn-secondary btn-lg text-dark" href="#" role="button">
+                <a href="ListaReservas" target="_parent" class="btn btn-secondary btn-lg text-dark" role="button">
                     <i class="oi oi-data-transfer-download text-dark"></i>
                     PDF
+                </a>
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="ListaReservas">
+                    Launch demo modal
                 </button>
             </div>
         </div>
@@ -136,7 +141,7 @@
         {
             connection.Open();
 
-            string q = "SELECT * FROM reserva_contenedor";
+            string q = "SELECT * FROM reserva_contenedor"; //selección de lo que q vaya a devolver
             if (Texto != "")
             {
                 q = q + " where codigo_contenedor ='" + Texto + "' ";
@@ -157,7 +162,7 @@
             }
 
             using var command = new MySqlCommand(q, connection);
-            using var reader = command.ExecuteReader();
+            using var reader = command.ExecuteReader(); //devuelve un objeto para poder hacer consultas, en este caso q
             while (reader.Read())
             {
                 var reserva = new Reserva();
@@ -184,25 +189,25 @@
         }
     }
 
-    protected override void OnInitialized()
+    protected override void OnInitialized() //inicializando la lectura de los datos
     {
         lee_reservas("");
     }
-
+    //funciones
     private void borrar(int id)
     {
         String connString = config.GetConnectionString("MySqlNaviera");
         {
             using var connection = new MySqlConnection(connString);
             {
-                connection.Open();
+                connection.Open(); //abriendo la conección a la base de datos, si xampp no está abierto no funciona
                 String q = "Delete from reserva_contenedor where id = '" + id + "'";
 
                 using var command = new MySqlCommand(q, connection);
-                var resultado = command.ExecuteNonQuery();
+                var resultado = command.ExecuteNonQuery(); //resultado de las filas afectadas por update, insert y delete
             }
         }
-        NavManager.NavigateTo("/");
+        NavManager.NavigateTo("/"); //dirige de nuevo a la página principal (reservas)
     }
 
     private void buscar(string Texto)

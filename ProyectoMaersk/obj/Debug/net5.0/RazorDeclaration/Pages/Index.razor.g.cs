@@ -112,7 +112,7 @@ using Clases;
         }
         #pragma warning restore 1998
 #nullable restore
-#line 127 "C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\Pages\Index.razor"
+#line 132 "C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\Pages\Index.razor"
  
     private List<Reserva> reservas = new List<Reserva>();
     Busqueda busqueda = new Busqueda();
@@ -125,7 +125,7 @@ using Clases;
         {
             connection.Open();
 
-            string q = "SELECT * FROM reserva_contenedor";
+            string q = "SELECT * FROM reserva_contenedor"; //selección de lo que q vaya a devolver
             if (Texto != "")
             {
                 q = q + " where codigo_contenedor ='" + Texto + "' ";
@@ -146,7 +146,7 @@ using Clases;
             }
 
             using var command = new MySqlCommand(q, connection);
-            using var reader = command.ExecuteReader();
+            using var reader = command.ExecuteReader(); //devuelve un objeto para poder hacer consultas, en este caso q
             while (reader.Read())
             {
                 var reserva = new Reserva();
@@ -173,25 +173,25 @@ using Clases;
         }
     }
 
-    protected override void OnInitialized()
+    protected override void OnInitialized() //inicializando la lectura de los datos
     {
         lee_reservas("");
     }
-
+    //funciones
     private void borrar(int id)
     {
         String connString = config.GetConnectionString("MySqlNaviera");
         {
             using var connection = new MySqlConnection(connString);
             {
-                connection.Open();
+                connection.Open(); //abriendo la conección a la base de datos, si xampp no está abierto no funciona
                 String q = "Delete from reserva_contenedor where id = '" + id + "'";
 
                 using var command = new MySqlCommand(q, connection);
-                var resultado = command.ExecuteNonQuery();
+                var resultado = command.ExecuteNonQuery(); //resultado de las filas afectadas por update, insert y delete
             }
         }
-        NavManager.NavigateTo("/");
+        NavManager.NavigateTo("/"); //dirige de nuevo a la página principal (reservas)
     }
 
     private void buscar(string Texto)

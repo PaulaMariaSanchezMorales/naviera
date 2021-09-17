@@ -1,0 +1,113 @@
+﻿@using Microsoft.Extensions.Configuration
+@using MySqlConnector
+@using Clases
+@inject Microsoft.Extensions.Configuration.IConfiguration config
+@layout BlankLayout
+@page "/ListaReservas"
+
+    <body onload="window.print()">
+    
+        <h4 class="text-center">Reporte General de Reservas</h4>
+
+        <table class="table table-sm">
+            <thead>
+                <tr class="bg-primary">
+                    <th>Codigo</th>
+                    <th>Empresa</th>
+                    <th>Número Tributario</th>
+                    <th>Direccion</th>
+                    <th>Puerto Origen</th>
+                    <th>Pais Origen</th>
+                    <th>Hora de salida</th>
+                    <th>Puerto Destino</th>
+                    <th>Pais Destino</th>
+                    <th>Hora de llegada</th>
+                    <th>Receptor de la carga</th>
+                    <th>Contraseña de Recepcion</th>
+                    <th>Tipo de Carga</th>
+                    <th>Descripcion de la Carga</th>
+                    <th>Peso</th>
+                    <th>Valor</th>
+                    <th>Tipo Contenedor</th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var reserva in reservas)
+                {
+                    <tr>
+                        <!--Agregué un ID que en la parte gráfica está oculto porque el código de contenedor que parecía ser la llave primaria no iba a ser única, por lo que el ID es un valor único autogenerado por la base de datos-->
+                        <td>@reserva.Codigo</td><!--valor autogenerado por la base de datos, con los requerimientos solicitados-->
+                        <td>@reserva.Empresa</td>
+                        <td>@reserva.Nit</td>
+                        <td>@reserva.Direccion</td>
+                        <td>@reserva.Puerto_Origen</td>
+                        <td>@reserva.Pais_Origen</td>
+                        <td>@reserva.Hora_Salida</td>
+                        <td>@reserva.Puerto_Destino</td>
+                        <td>@reserva.Pais_Destino</td>
+                        <td>@reserva.Hora_Llegada</td>
+                        <td>@reserva.Receptor</td>
+                        <td>@reserva.Contraseña_Recepcion</td> <!--valor autogenerado por la base de datos-->
+                        <td>@reserva.Tipo_Carga</td>
+                        <td>@reserva.Descripcion</td>
+                        <td>@reserva.Peso</td>
+                        <td>@reserva.Valor</td>
+                        <td>@reserva.Tipo_Contenedor</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </body>
+
+    @code
+{
+        private List<Reserva> reservas = new List<Reserva>();
+
+        public void lee_reservas()
+        {
+            reservas.Clear();
+            String connString = config.GetConnectionString("MySqlNaviera");
+            using var connection = new MySqlConnection(connString);
+            {
+                connection.Open();
+
+                string q = "SELECT * FROM reserva_contenedor"; //selección de lo que q vaya a devolver
+
+                using var command = new MySqlCommand(q, connection);
+                using var reader = command.ExecuteReader(); //devuelve un objeto para poder hacer consultas, en este caso q
+                while (reader.Read())
+                {
+                    var reserva = new Reserva();
+                    reserva.Id = (int)reader["id"];
+                    reserva.Codigo = reader["Codigo_contenedor"].ToString();
+                    reserva.Empresa = reader["Empresa"].ToString();
+                    reserva.Nit = reader["Nit"].ToString();
+                    reserva.Direccion = reader["Direccion"].ToString();
+                    reserva.Puerto_Origen = reader["Puerto_Origen"].ToString();
+                    reserva.Pais_Origen = reader["Pais_Origen"].ToString();
+                    reserva.Hora_Salida = ((DateTime)reader["Hora_Salida"]).ToString("dd/MM/yyyy hh:mm tt"); //convierte lo que la base de datos trae a tipo DateTime de C# y le aplica el formato
+                    reserva.Puerto_Destino = reader["Puerto_Destino"].ToString();
+                    reserva.Pais_Destino = reader["Pais_Destino"].ToString();
+                    reserva.Hora_Llegada = ((DateTime)reader["Hora_Llegada"]).ToString("dd/MM/yyyy hh:mm tt");
+                    reserva.Receptor = reader["Receptor"].ToString();
+                    reserva.Contraseña_Recepcion = reader["Contraseña_Recepcion"].ToString();
+                    reserva.Tipo_Carga = reader["Tipo_Carga"].ToString();
+                    reserva.Descripcion = reader["Descripcion_carga"].ToString();
+                    reserva.Peso = reader["Peso_carga"].ToString();
+                    reserva.Valor = reader["Valor_carga"].ToString();
+                    reserva.Tipo_Contenedor = reader["Tipo_Contenedor"].ToString();
+                    reservas.Add(reserva);
+                }
+            }
+        }
+
+        protected override void OnInitialized() //inicializando la lectura de los datos
+        {
+            lee_reservas();
+        }
+    }

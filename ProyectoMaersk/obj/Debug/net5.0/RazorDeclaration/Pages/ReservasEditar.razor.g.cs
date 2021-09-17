@@ -119,14 +119,14 @@ using Clases;
         }
         #pragma warning restore 1998
 #nullable restore
-#line 124 "C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\Pages\ReservasEditar.razor"
+#line 125 "C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\Pages\ReservasEditar.razor"
  
     int Id = 0;
     Reserva reserva = new Reserva();
 
     //String hora = "12:30";
 
-    List<Pais> Paises_Origen = new List<Pais>();
+    List<Pais> Paises_Origen = new List<Pais>(); //listado de los países existentes
     List<Pais> Paises_Destino = new List<Pais>();
 
     List<Puerto> Puertos_Origen = new List<Puerto>();
