@@ -1,0 +1,260 @@
+﻿@using Microsoft.AspNetCore.WebUtilities
+@using Microsoft.Extensions.Configuration
+@using MySqlConnector
+@using Clases
+@layout BlankLayout
+@inject Microsoft.Extensions.Configuration.IConfiguration config
+@inject NavigationManager NavManager
+
+@page "/Facturas"
+
+<body onload="window.print()">
+    <div class="row">
+        <div class="col-sm-4 mb-3">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Maersk_Group_Logo.svg/1280px-Maersk_Group_Logo.svg.png" class="img-fluid" width="500" height="400">
+            <br />
+            <br />
+        </div>
+        <div class="col-sm-8 mb-3">
+            <br />
+            <br />
+            <div class="d-flex p-3 bd-highlight bg-tertiary"></div>
+        </div>
+    </div>
+
+    <h1>
+        <div class="d-flex p-2 bd-highlight bg-secondary">Facturación</div>
+        <br />
+    </h1>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-4 mb-3">
+                <h4 for="empresa" class="font-weight-bold">Empresa: </h4>
+            </div>
+            <div class="col-sm-8 mb-3">
+                <div>
+                    <h4 id="empresa">@reserva.Empresa</h4>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4 mb-3">
+                <h4 for="nit" class="font-weight-bold">ID tributario: </h4>
+            </div>
+            <div class="col-sm-8 mb-3">
+                <div>
+                    <h4 id="nit">@reserva.Nit</h4>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4 mb-3">
+                <h4 for="codigo" class="font-weight-bold">Código de contenedor: </h4>
+            </div>
+            <div class="col-sm-8 mb-3">
+                <div>
+                    <h4 id="codigo">@reserva.Codigo</h4>
+                </div>
+            </div>
+        </div>
+        <br />
+        <br />
+        <br />
+        <div class="row">
+            <div class="col-sm-4 mb-3">
+                <h4>Flete marítimo internacional</h4>
+            </div>
+            <div class="col-sm-2 mb-3">
+                <h4>US $</h4>
+            </div>
+            <div class="col-sm-4 mb-3">
+                <h4>29 toneladas * </h4>
+            </div>
+            <div class="col-sm-2 mb-3">
+                <h4 id="valor">@reserva.Valor</h4>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4 mb-3">
+                <h4>Desplazamiento contenedor</h4>
+            </div>
+            <div class="col-sm-2 mb-3">
+                <h4>US $</h4>
+            </div>
+            <div class="col-sm-4 mb-3">
+                <h4></h4>
+            </div>
+            <div class="col-sm-2 mb-3">
+                <h4>$ 150.00</h4>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4 mb-3">
+                <h4>Recargo de combustible</h4>
+            </div>
+            <div class="col-sm-2 mb-3">
+                <h4>US $</h4>
+            </div>
+            <div class="col-sm-4 mb-3">
+                <h4></h4>
+            </div>
+            <div class="col-sm-2 mb-3">
+                <h4>$ 100.00</h4>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4 mb-3">
+                <h4>Ajuste tipo de cambio</h4>
+            </div>
+            <div class="col-sm-2 mb-3">
+                <h4>US $</h4>
+            </div>
+            <div class="col-sm-4 mb-3">
+                <h4></h4>
+            </div>
+            <div class="col-sm-2 mb-3">
+                <h4>$ 100.00</h4>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4 mb-3">
+                <h4>Gastos de documentación</h4>
+            </div>
+            <div class="col-sm-2 mb-3">
+                <h4>US $</h4>
+            </div>
+            <div class="col-sm-4 mb-3">
+                <h4></h4>
+            </div>
+            <div class="col-sm-2 mb-3">
+                <h4>$ 300.00</h4>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4 mb-3">
+                <h4>Tasas portuarias</h4>
+            </div>
+            <div class="col-sm-2 mb-3">
+                <h4>US $</h4>
+            </div>
+            <div class="col-sm-4 mb-3">
+                <h4></h4>
+            </div>
+            <div class="col-sm-2 mb-3">
+                <h4>$ 300.00</h4>
+            </div>
+        </div>
+        <div class="d-flex p-1 bd-highlight bg-dark"></div>
+        <br />
+        <div class="row">
+            <div class="col-sm-4 mb-3">
+                <h4 class="font-weight-bold">Total de facturación</h4>
+            </div>
+            <div class="col-sm-2 mb-3">
+                <h4 class="font-weight-bold">US $</h4>
+            </div>
+            <div class="col-sm-4 mb-3">
+                <h4></h4>
+            </div>
+            <div class="col-sm-2 mb-3"> 
+                <h4 class="font-weight-bold">$ @reserva.Total_Factura.00</h4>
+            </div>
+        </div>
+    </div>
+    <!--sumas-->
+</body>
+
+@code
+{
+        int Id = 0;
+        Reserva reserva = new Reserva();
+
+        List<Pais> Paises_Origen = new List<Pais>(); //listado de los países existentes
+        List<Pais> Paises_Destino = new List<Pais>();
+
+        List<Puerto> Puertos_Origen = new List<Puerto>();
+        List<Puerto> Puertos_Destino = new List<Puerto>();
+
+        List<Tipo_carga> Tipo_Carga = new List<Tipo_carga>();
+
+        List<Valor> Valores = new List<Valor>();
+
+        List<Tipo_contenedor> Tipo_Contenedores = new List<Tipo_contenedor>();
+
+
+    protected override void OnInitialized()
+    {
+        var uri = NavManager.ToAbsoluteUri(NavManager.Uri);
+        if (QueryHelpers.ParseQuery(uri.Query).TryGetValue("Id", out var param))
+        {
+            String parametro = param.First();
+            if (parametro != null)
+            {
+                Int32.TryParse(parametro, out Id);
+            }
+        }
+
+        String connString = config.GetConnectionString("MySqlNaviera");
+        using var connection = new MySqlConnection(connString);
+        {
+            connection.Open();
+            String q = "SELECT * FROM reserva_contenedor where id = '" + Id + "';";
+
+            using var command = new MySqlCommand(q, connection);
+            using var reader = command.ExecuteReader();
+            while (reader.Read())
+            {
+                reserva.Id = (int)reader["id"];
+                reserva.Codigo = reader["Codigo_contenedor"].ToString();
+                reserva.Empresa = reader["Empresa"].ToString();
+                reserva.Nit = reader["Nit"].ToString();
+                reserva.Direccion = reader["Direccion"].ToString();
+                reserva.Puerto_Origen = reader["Puerto_Origen"].ToString();
+                reserva.Pais_Origen = reader["Pais_Origen"].ToString();
+                reserva.Hora_Salida = reader["Hora_Salida"].ToString();
+                reserva.Puerto_Destino = reader["Puerto_Destino"].ToString();
+                reserva.Pais_Destino = reader["Pais_Destino"].ToString();
+                reserva.Hora_Llegada = reader["Hora_Llegada"].ToString();
+                reserva.Receptor = reader["Receptor"].ToString();
+                reserva.Contraseña_Recepcion = reader["Contraseña_Recepcion"].ToString();
+                reserva.Tipo_Carga = reader["Tipo_Carga"].ToString();
+                reserva.Descripcion = reader["Descripcion_carga"].ToString();
+                reserva.Peso = reader["Peso_carga"].ToString();
+                reserva.Valor = reader["Valor_carga"].ToString();
+                reserva.Tipo_Contenedor = reader["Tipo_Contenedor"].ToString();
+                double valordelareserva = 0;
+                double.TryParse(reserva.Valor.Substring(2,7), out valordelareserva);
+                double totalfactura = valordelareserva + 950.00;
+                reserva.Total_Factura = totalfactura.ToString();
+            }
+        }
+
+        //para que aparezca el nombre del puerto y no el código
+        using var connectionPO = new MySqlConnection(connString);
+        {
+            connectionPO.Open();
+
+            string qPO = "SELECT * FROM puertos where codigo = '" + reserva.Puerto_Origen + "'";
+            using var commandPO = new MySqlCommand(qPO, connectionPO);
+            using var readerPO = commandPO.ExecuteReader(); //devuelve un objeto para poder hacer consultas, en este caso q
+            if (readerPO.Read())
+            {
+                reserva.Nombre_Puerto_Origen = readerPO["nombre"].ToString();
+            }
+        }
+
+        using var connectionPD = new MySqlConnection(connString);
+        {
+            connectionPD.Open();
+
+            string qPD = "SELECT * FROM puertos where codigo = '" + reserva.Puerto_Destino + "'";
+            using var commandPD = new MySqlCommand(qPD, connectionPD);
+            using var readerPD = commandPD.ExecuteReader(); //devuelve un objeto para poder hacer consultas, en este caso q
+            if (readerPD.Read())
+            {
+                reserva.Nombre_Puerto_Destino = readerPD["nombre"].ToString();
+            }
+        }
+    }
+}

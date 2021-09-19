@@ -4,7 +4,7 @@
 #pragma warning disable 0649
 #pragma warning disable 0169
 
-namespace ProyectoMaersk.Shared
+namespace ProyectoMaersk.Pages
 {
     #line hidden
     using System;
@@ -82,13 +82,81 @@ using ProyectoMaersk.Shared;
 #line default
 #line hidden
 #nullable disable
-    public partial class LoginDisplay : Microsoft.AspNetCore.Components.ComponentBase
+#nullable restore
+#line 2 "C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\Pages\LogOut - Copy.razor"
+using Microsoft.Extensions.Configuration;
+
+#line default
+#line hidden
+#nullable disable
+#nullable restore
+#line 3 "C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\Pages\LogOut - Copy.razor"
+using MySqlConnector;
+
+#line default
+#line hidden
+#nullable disable
+#nullable restore
+#line 4 "C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\Pages\LogOut - Copy.razor"
+using Clases;
+
+#line default
+#line hidden
+#nullable disable
+    [Microsoft.AspNetCore.Components.LayoutAttribute(typeof(BlankLayout))]
+    [Microsoft.AspNetCore.Components.RouteAttribute("/Login")]
+    public partial class LogOut___Copy : Microsoft.AspNetCore.Components.ComponentBase
     {
         #pragma warning disable 1998
         protected override void BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
         {
         }
         #pragma warning restore 1998
+#nullable restore
+#line 35 "C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\Pages\LogOut - Copy.razor"
+ 
+    private DataLogIn login = new DataLogIn();
+
+    public void ingresar()
+    {
+        loginState.SetLogin(true, login.Usuario);
+        lee_usuarios(login.Usuario, login.Contraseña);
+        NavManager.NavigateTo("/");
+    }
+
+    public void lee_usuarios(String usuario, String contraseña)
+    {
+        String connString = config.GetConnectionString("MySqlNaviera");
+        using var connection = new MySqlConnection(connString);
+        {
+            connection.Open();
+
+            string q = "SELECT * FROM registro_personal";
+            if (login.Usuario != "" && login.Contraseña != "")
+            {
+                q = q + " where codigo_empleado ='" + login.Usuario + "' ";
+                q = q + "and contraseña ='" + login.Contraseña + "'";
+            }
+
+            using var command = new MySqlCommand(q, connection);
+            using var reader = command.ExecuteReader();
+            if (reader.Read())
+            {
+                loginState.nombre = reader["Usuario"].ToString();
+            }
+            else
+            {
+                loginState.nombre = "";
+            }
+        }
+    }
+
+#line default
+#line hidden
+#nullable disable
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private NavigationManager NavManager { get; set; }
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private Microsoft.Extensions.Configuration.IConfiguration config { get; set; }
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private LoginState loginState { get; set; }
     }
 }
 #pragma warning restore 1591

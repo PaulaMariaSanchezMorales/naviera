@@ -13,9 +13,11 @@ namespace ProyectoMaersk.Clases
         public String Nit { get; set; }
         public String Direccion { get; set; }
         public String Puerto_Origen { get; set; }
+        public String Nombre_Puerto_Origen { get; set; }
         public String Pais_Origen { get; set; }
         public String Hora_Salida { get; set; }
         public String Puerto_Destino { get; set; }
+        public String Nombre_Puerto_Destino { get; set; }
         public String Pais_Destino { get; set; }
         public String Hora_Llegada { get; set; }
         public String Receptor { get; set; }
@@ -25,5 +27,6 @@ namespace ProyectoMaersk.Clases
         public String Peso { get; set; }
         public String Valor { get; set; }
         public String Tipo_Contenedor { get; set; }
+        public String Total_Factura { get; set; }
     }
 }

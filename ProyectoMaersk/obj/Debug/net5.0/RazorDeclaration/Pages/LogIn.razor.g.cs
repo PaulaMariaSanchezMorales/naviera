@@ -83,28 +83,29 @@ using ProyectoMaersk.Shared;
 #line hidden
 #nullable disable
 #nullable restore
-#line 1 "C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\Pages\Personal.razor"
+#line 2 "C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\Pages\LogIn.razor"
 using Microsoft.Extensions.Configuration;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 2 "C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\Pages\Personal.razor"
+#line 3 "C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\Pages\LogIn.razor"
 using MySqlConnector;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 3 "C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\Pages\Personal.razor"
+#line 4 "C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\Pages\LogIn.razor"
 using Clases;
 
 #line default
 #line hidden
 #nullable disable
-    [Microsoft.AspNetCore.Components.RouteAttribute("/Personal")]
-    public partial class Personal : Microsoft.AspNetCore.Components.ComponentBase
+    [Microsoft.AspNetCore.Components.LayoutAttribute(typeof(BlankLayout))]
+    [Microsoft.AspNetCore.Components.RouteAttribute("/Login")]
+    public partial class LogIn : Microsoft.AspNetCore.Components.ComponentBase
     {
         #pragma warning disable 1998
         protected override void BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
@@ -112,80 +113,69 @@ using Clases;
         }
         #pragma warning restore 1998
 #nullable restore
-#line 68 "C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\Pages\Personal.razor"
+#line 53 "C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\Pages\LogIn.razor"
  
-    private List<Usuarios> usuarios = new List<Usuarios>();
-    Busqueda busqueda = new Busqueda();
+        private DataLogIn login = new DataLogIn();
 
-    public void lee_usuarios(String Texto)
-    {
-        usuarios.Clear();
-        String connString = config.GetConnectionString("MySqlNaviera");
-        using var connection = new MySqlConnection(connString);
+        public void ingresar()
         {
-            connection.Open();
-
-            string q = "SELECT * FROM usuarios";
-            if (Texto != "")
+            loginState.SetLogin(true, login.Usuario);
+            lee_usuarios(login.Usuario, login.Contraseña);
+            if (login.Error == "")
             {
-                q = q + " where tipo_empleado ='" + Texto + "' ";
-                //q = q + "or contraseña ='" + Texto + "' ";
-                q = q + "or codigo_empleado ='" + Texto + "' ";
-                q = q + "or nombre ='" + Texto + "' ";
-                q = q + "or puerto ='" + Texto + "' ";
-                q = q + "or pais ='" + Texto + "'";
-            }
-
-            using var command = new MySqlCommand(q, connection);
-            using var reader = command.ExecuteReader();
-            while (reader.Read())
-            {
-                var usuario = new Usuarios();
-                usuario.Id = (int)reader["id"];
-                usuario.Tipo = reader["Tipo_empleado"].ToString();
-                usuario.Contraseña = reader["Contraseña"].ToString();
-                usuario.Codigo = reader["Codigo_empleado"].ToString();
-                usuario.Nombre = reader["Nombre"].ToString();
-                usuario.Puerto = reader["Puerto"].ToString();
-                usuario.Pais = reader["Pais"].ToString();
-
-                usuarios.Add(usuario);
+                NavManager.NavigateTo("/");
             }
         }
-    }
 
-    protected override void OnInitialized()
-    {
-        lee_usuarios("");
-    }
-
-    private void borrar(int id)
-    {
-        String connString = config.GetConnectionString("MySqlNaviera");
+        public void lee_usuarios(String usuario, String contraseña)
         {
+
+            loginState.nombre = "";
+            loginState.codigo = "";
+            loginState.IsLoggedIn = false;
+            login.Error = "";
+
+            String connString = config.GetConnectionString("MySqlNaviera");
             using var connection = new MySqlConnection(connString);
             {
                 connection.Open();
-                String q = "Delete from usuarios where id = '" + id + "'";
 
-                using var command = new MySqlCommand(q, connection);
-                var resultado = command.ExecuteNonQuery();
+                string q = "";
+
+                if (login.Usuario == "" || login.Contraseña == "")
+                {
+                    login.Error = "Debe ingresar un usuario y una contraseña";
+                }
+                else
+                {
+                    q = "SELECT * FROM usuarios";
+                    q = q + " where codigo_empleado ='" + login.Usuario + "' ";
+                    q = q + "and contraseña ='" + login.Contraseña + "'";
+
+                    using var command = new MySqlCommand(q, connection);
+                    using var reader = command.ExecuteReader();
+                    if (reader.Read())
+                    {
+                        loginState.nombre = reader["Nombre"].ToString();
+                        loginState.codigo = reader["Codigo_empleado"].ToString();
+                        loginState.IsLoggedIn = true;
+                    }
+                    else
+                    {
+                        login.Error = "Usuario o contraseña invalidos";
+                    }
+                }
+
             }
         }
-        NavManager.NavigateTo("/Personal", true);
-    }
-
-    private void buscar(string Texto)
-    {
-        lee_usuarios(Texto);
-        NavManager.NavigateTo("/Personal");
-    }
+    
 
 #line default
 #line hidden
 #nullable disable
         [global::Microsoft.AspNetCore.Components.InjectAttribute] private NavigationManager NavManager { get; set; }
         [global::Microsoft.AspNetCore.Components.InjectAttribute] private Microsoft.Extensions.Configuration.IConfiguration config { get; set; }
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private LoginState loginState { get; set; }
     }
 }
 #pragma warning restore 1591

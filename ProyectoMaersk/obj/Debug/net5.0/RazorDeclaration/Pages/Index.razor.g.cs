@@ -112,7 +112,7 @@ using Clases;
         }
         #pragma warning restore 1998
 #nullable restore
-#line 132 "C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\Pages\Index.razor"
+#line 147 "C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\Pages\Index.razor"
  
     private List<Reserva> reservas = new List<Reserva>();
     Busqueda busqueda = new Busqueda();
@@ -168,6 +168,33 @@ using Clases;
                 reserva.Peso = reader["Peso_carga"].ToString();
                 reserva.Valor = reader["Valor_carga"].ToString();
                 reserva.Tipo_Contenedor = reader["Tipo_Contenedor"].ToString();
+
+                //para que aparezca el nombre del puerto y no el código
+                using var connectionPO = new MySqlConnection(connString);
+                {
+                    connectionPO.Open();
+
+                    string qPO = "SELECT * FROM puertos where codigo = '" + reserva.Puerto_Origen + "'";
+                    using var commandPO = new MySqlCommand(qPO, connectionPO);
+                    using var readerPO = commandPO.ExecuteReader(); //devuelve un objeto para poder hacer consultas, en este caso q
+                    if (readerPO.Read())
+                    {
+                        reserva.Nombre_Puerto_Origen = readerPO["nombre"].ToString();
+                    }
+                }
+
+                using var connectionPD = new MySqlConnection(connString);
+                {
+                    connectionPD.Open();
+
+                    string qPD = "SELECT * FROM puertos where codigo = '" + reserva.Puerto_Destino + "'";
+                    using var commandPD = new MySqlCommand(qPD, connectionPD);
+                    using var readerPD = commandPD.ExecuteReader(); //devuelve un objeto para poder hacer consultas, en este caso q
+                    if (readerPD.Read())
+                    {
+                        reserva.Nombre_Puerto_Destino = readerPD["nombre"].ToString();
+                    }
+                }
                 reservas.Add(reserva);
             }
         }
@@ -191,7 +218,7 @@ using Clases;
                 var resultado = command.ExecuteNonQuery(); //resultado de las filas afectadas por update, insert y delete
             }
         }
-        NavManager.NavigateTo("/"); //dirige de nuevo a la página principal (reservas)
+        NavManager.NavigateTo("/", true); //dirige de nuevo a la página principal (reservas)
     }
 
     private void buscar(string Texto)
@@ -205,6 +232,7 @@ using Clases;
 #nullable disable
         [global::Microsoft.AspNetCore.Components.InjectAttribute] private NavigationManager NavManager { get; set; }
         [global::Microsoft.AspNetCore.Components.InjectAttribute] private Microsoft.Extensions.Configuration.IConfiguration config { get; set; }
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private LoginState loginState { get; set; }
     }
 }
 #pragma warning restore 1591

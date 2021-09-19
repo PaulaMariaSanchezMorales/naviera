@@ -1,133 +1,148 @@
 ﻿@using Microsoft.Extensions.Configuration
 @using MySqlConnector
 @using Clases
+@inject LoginState loginState
 @inject Microsoft.Extensions.Configuration.IConfiguration config
 @inject NavigationManager NavManager
 @page "/"
 
-<AuthorizeView>
-    <Authorized Context="autorizado">
+@if (loginState.IsLoggedIn)
+{
+    // Si esta Loggeado
+    <h1>Reservas</h1>
 
-        <h1>Reservas</h1>
+    <h4>Listado de reservas</h4>
 
-        <h4>Listado de reservas</h4>
-
-        <div class="row">
-            <div class="col-sm-10 mb-3">
-                <a class="btn btn-secondary text-dark" href="ReservasEditar" role="button">Agregar</a>
-            </div>
-            <div class="col-sm-2 mb-3">
-                <EditForm Model="@busqueda" class="form-inline">
-                    <div class="form-group">
-                        <button class="btn btn-secondary" @onclick="() => buscar(busqueda.Texto)" role="button">
-                            <i class="oi oi-magnifying-glass text-dark"></i>
+    <div class="row">
+        <div class="col-sm-10 mb-3">
+            <a class="btn btn-secondary text-dark" href="ReservasEditar" role="button">Agregar</a>
+        </div>
+        <div class="col-sm-2 mb-3">
+            <EditForm Model="@busqueda" class="form-inline">
+                <div class="form-group">
+                    <button class="btn btn-secondary" @onclick="() => buscar(busqueda.Texto)" role="button">
+                        <i class="oi oi-magnifying-glass text-dark"></i>
+                    </button>
+                    <InputText id="textobuscar" @bind-Value="busqueda.Texto" class="form-control" placeholder="Buscar" />
+                </div><!--bind value para que realice la función con el texto que el usuario ingresó-->
+            </EditForm>
+        </div>
+    </div>
+    <table class="table table-sm">
+        <thead>
+            <tr class="bg-primary">
+                <!--Agregué un ID-->
+                <th>Codigo</th>
+                <th>Empresa</th>
+                <th>Número Tributario</th>
+                <th>Direccion</th>
+                <th>Puerto Origen</th>
+                <th>Pais Origen</th>
+                <th>Hora de salida</th>
+                <th>Puerto Destino</th>
+                <th>Pais Destino</th>
+                <th>Hora de llegada</th>
+                <th>Receptor de la carga</th>
+                <th>Contraseña de Recepcion</th>
+                <th>Tipo de Carga</th>
+                <th>Descripcion de la Carga</th>
+                <th>Peso</th>
+                <th>Valor</th>
+                <th>Tipo Contenedor</th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var reserva in reservas)
+            {
+                <tr>
+                    <!--Agregué un ID que en la parte gráfica está oculto porque el código de contenedor que parecía ser la llave primaria no iba a ser única, por lo que el ID es un valor único autogenerado por la base de datos-->
+                    <td>@reserva.Codigo</td><!--valor autogenerado por la base de datos, con los requerimientos solicitados-->
+                    <td>@reserva.Empresa</td>
+                    <td>@reserva.Nit</td>
+                    <td>@reserva.Direccion</td>
+                    <td>@reserva.Nombre_Puerto_Origen</td>
+                    <td>@reserva.Pais_Origen</td>
+                    <td>@reserva.Hora_Salida</td>
+                    <td>@reserva.Nombre_Puerto_Destino</td>
+                    <td>@reserva.Pais_Destino</td>
+                    <td>@reserva.Hora_Llegada</td>
+                    <td>@reserva.Receptor</td>
+                    <td>@reserva.Contraseña_Recepcion</td> <!--valor autogenerado por la base de datos-->
+                    <td>@reserva.Tipo_Carga</td>
+                    <td>@reserva.Descripcion</td>
+                    <td>@reserva.Peso</td>
+                    <td>@reserva.Valor</td>
+                    <td>@reserva.Tipo_Contenedor</td>
+                    <!--botón para descarga de reporte individual-->
+                    <td>
+                        <div class="row">
+                            <div class="col-12 text-center">
+                                <a href="ListaReservasIndividual?Id=@reserva.Id" target="_blank" class="btn btn-secondary text-dark" role="button">
+                                    <!--link pintado como botón para que dirija hacia ListaReservas-->
+                                    <!--?Id enviando parámetro de id a ListaReservasIndividual-->
+                                    <i class="oi oi-data-transfer-download text-dark"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </td>
+                    <!--botón para descarga de factura individual-->
+                    <td>
+                        <div class="row">
+                            <div class="col-12 text-center">
+                                <a href="Facturas?Id=@reserva.Id" target="_blank" class="btn btn-secondary text-dark" role="button">
+                                    <!--link pintado como botón para que dirija hacia ListaReservas-->
+                                    <!--?Id enviando parámetro de id a ListaReservasIndividual-->
+                                    <i class="oi oi-document text-dark"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </td>
+                    <!--botón para edición-->
+                    <td>
+                        <a class="btn btn-secondary text-dark" href="ReservasEditar?Id=@reserva.Id" role="button">
+                            <i class="oi oi-pencil text-dark"></i>
+                        </a>
+                    </td>
+                    <!--botón para eliminar-->
+                    <td>
+                        <button class="btn btn-secondary" @onclick="() => borrar(reserva.Id)" role="button">
+                            <i class="oi oi-trash text-dark"></i>
                         </button>
-                        <InputText id="textobuscar" @bind-Value="busqueda.Texto" class="form-control" placeholder="Buscar" />
-                    </div><!--bind value para que realice la función con el texto que el usuario ingresó-->
-                </EditForm>
-            </div>
-        </div>
-        <table class="table table-sm">
-            <thead>
-                <tr class="bg-primary">
-                    <!--Agregué un ID-->
-                    <th>Codigo</th>
-                    <th>Empresa</th>
-                    <th>Número Tributario</th>
-                    <th>Direccion</th>
-                    <th>Puerto Origen</th>
-                    <th>Pais Origen</th>
-                    <th>Hora de salida</th>
-                    <th>Puerto Destino</th>
-                    <th>Pais Destino</th>
-                    <th>Hora de llegada</th>
-                    <th>Receptor de la carga</th>
-                    <th>Contraseña de Recepcion</th>
-                    <th>Tipo de Carga</th>
-                    <th>Descripcion de la Carga</th>
-                    <th>Peso</th>
-                    <th>Valor</th>
-                    <th>Tipo Contenedor</th>
-                    <th></th>
-                    <th></th>
-                    <th></th>
-                    <th></th>
-                    <th></th>
+                    </td>
                 </tr>
-            </thead>
-            <tbody>
-                @foreach (var reserva in reservas)
-                {
-                    <tr>
-                        <!--Agregué un ID que en la parte gráfica está oculto porque el código de contenedor que parecía ser la llave primaria no iba a ser única, por lo que el ID es un valor único autogenerado por la base de datos-->
-                        <td>@reserva.Codigo</td><!--valor autogenerado por la base de datos, con los requerimientos solicitados-->
-                        <td>@reserva.Empresa</td>
-                        <td>@reserva.Nit</td>
-                        <td>@reserva.Direccion</td>
-                        <td>@reserva.Puerto_Origen</td>
-                        <td>@reserva.Pais_Origen</td>
-                        <td>@reserva.Hora_Salida</td>
-                        <td>@reserva.Puerto_Destino</td>
-                        <td>@reserva.Pais_Destino</td>
-                        <td>@reserva.Hora_Llegada</td>
-                        <td>@reserva.Receptor</td>
-                        <td>@reserva.Contraseña_Recepcion</td> <!--valor autogenerado por la base de datos-->
-                        <td>@reserva.Tipo_Carga</td>
-                        <td>@reserva.Descripcion</td>
-                        <td>@reserva.Peso</td>
-                        <td>@reserva.Valor</td>
-                        <td>@reserva.Tipo_Contenedor</td>
-                        <td>
-                            <button class="btn btn-secondary text-dark" href="#" role="button">
-                                <i class="oi oi-document text-dark"></i>
-                            </button>
-                        </td>
-                        <td>
-                            <button class="btn btn-secondary text-dark" href="#" role="button">
-                                <i class="oi oi-data-transfer-download text-dark"></i>
-                            </button>
-                        </td>
-                        <td>
-                            <a class="btn btn-secondary text-dark" href="ReservasEditar?Id=@reserva.Id" role="button">
-                                <i class="oi oi-pencil text-dark"></i>
-                            </a>
-                        </td>
-                        <td>
-                            <button class="btn btn-secondary" @onclick="() => borrar(reserva.Id)" role="button">
-                                <i class="oi oi-trash text-dark"></i>
-                            </button>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-        <div class="row">
-            <div class="col-12 text-center">
-                <a href="ListaReservas" target="_parent" class="btn btn-secondary btn-lg text-dark" role="button">
-                    <i class="oi oi-data-transfer-download text-dark"></i>
-                    PDF
-                </a>
-                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="ListaReservas">
-                    Launch demo modal
-                </button>
-            </div>
+            }
+        </tbody>
+    </table>
+    <div class="row">
+        <div class="col-12 text-center">
+            <a href="ListaReservas" target="_blank" class="btn btn-secondary btn-lg text-dark" role="button">
+                <!--link pintado como botón para que dirija hacia ListaReservas-->
+                <i class="oi oi-print text-dark"></i>
+                Imprimir reporte de Reservas general
+            </a>
         </div>
-    </Authorized>
-    <NotAuthorized>
-        <div class="row">
-            <div class="col-12 text-center">
-                <div style="font-size: 64px;">NAVIERA MAERKS LINE</div>
-            </div>
+    </div>
+}
+else
+{ 
+    // No esta Loggeado
+    <div class="row">
+        <div class="col-12 text-center">
+            <div style="font-size: 64px;">NAVIERA MAERKS LINE</div>
         </div>
-        <div class="row">
-            <div class="col-12 m-0 p-0 text-center">
-                <img src="/barco.jpg" style="width:100%;">
-            </div>
+    </div>
+    <div class="row">
+        <div class="col-12 m-0 p-0 text-center">
+            <img src="/barco.jpg" style="width:100%;">
         </div>
-        }
-    </NotAuthorized>
-</AuthorizeView>
-
+    </div>
+}
+   
 @code
 {
     private List<Reserva> reservas = new List<Reserva>();
@@ -184,6 +199,33 @@
                 reserva.Peso = reader["Peso_carga"].ToString();
                 reserva.Valor = reader["Valor_carga"].ToString();
                 reserva.Tipo_Contenedor = reader["Tipo_Contenedor"].ToString();
+
+                //para que aparezca el nombre del puerto y no el código
+                using var connectionPO = new MySqlConnection(connString);
+                {
+                    connectionPO.Open();
+
+                    string qPO = "SELECT * FROM puertos where codigo = '" + reserva.Puerto_Origen + "'";
+                    using var commandPO = new MySqlCommand(qPO, connectionPO);
+                    using var readerPO = commandPO.ExecuteReader(); //devuelve un objeto para poder hacer consultas, en este caso q
+                    if (readerPO.Read())
+                    {
+                        reserva.Nombre_Puerto_Origen = readerPO["nombre"].ToString();
+                    }
+                }
+
+                using var connectionPD = new MySqlConnection(connString);
+                {
+                    connectionPD.Open();
+
+                    string qPD = "SELECT * FROM puertos where codigo = '" + reserva.Puerto_Destino + "'";
+                    using var commandPD = new MySqlCommand(qPD, connectionPD);
+                    using var readerPD = commandPD.ExecuteReader(); //devuelve un objeto para poder hacer consultas, en este caso q
+                    if (readerPD.Read())
+                    {
+                        reserva.Nombre_Puerto_Destino = readerPD["nombre"].ToString();
+                    }
+                }
                 reservas.Add(reserva);
             }
         }
@@ -207,7 +249,7 @@
                 var resultado = command.ExecuteNonQuery(); //resultado de las filas afectadas por update, insert y delete
             }
         }
-        NavManager.NavigateTo("/"); //dirige de nuevo a la página principal (reservas)
+        NavManager.NavigateTo("/", true); //dirige de nuevo a la página principal (reservas)
     }
 
     private void buscar(string Texto)

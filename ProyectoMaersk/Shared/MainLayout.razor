@@ -1,4 +1,8 @@
-﻿@inherits LayoutComponentBase
+﻿@using Clases
+@inherits LayoutComponentBase
+@implements IDisposable
+@inject LoginState loginState;
+
 
 <div class="page">
     <div class="sidebar">
@@ -7,8 +11,10 @@
 
     <div class="main">
         <div class="top-row px-4 auth" style="background-color:#778DA9">
-            <LoginDisplay />
-            <a href="https://docs.microsoft.com/aspnet/" class="text-white" target="_blank">About</a>
+            @if (!loginState.IsLoggedIn)
+            {
+                <a href="Login" class="text-white">Log in</a>
+            }
         </div>
 
         <div class="content px-4">
@@ -16,3 +22,14 @@
         </div>
     </div>
 </div>
+
+@code {
+    protected override void OnInitialized()
+    {
+        loginState.OnChange += StateHasChanged;
+    }
+    public void Dispose()
+    {
+        loginState.OnChange -= StateHasChanged;
+    }
+}

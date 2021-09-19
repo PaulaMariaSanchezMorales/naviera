@@ -84,7 +84,7 @@ using ProyectoMaersk.Shared;
 #nullable disable
 #nullable restore
 #line 1 "C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\Shared\NavMenu.razor"
-using Microsoft.AspNetCore.Identity;
+using ProyectoMaersk.Clases;
 
 #line default
 #line hidden
@@ -97,7 +97,7 @@ using Microsoft.AspNetCore.Identity;
         }
         #pragma warning restore 1998
 #nullable restore
-#line 48 "C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\Shared\NavMenu.razor"
+#line 59 "C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\Shared\NavMenu.razor"
        
     private bool collapseNavMenu = true;
 
@@ -108,11 +108,19 @@ using Microsoft.AspNetCore.Identity;
         collapseNavMenu = !collapseNavMenu;
     }
 
+    public void logout()
+    {
+        loginState.nombre = "";
+        loginState.codigo = "";
+        loginState.IsLoggedIn = false;
+        NavManager.NavigateTo("/", true);
+    }
+
 #line default
 #line hidden
 #nullable disable
-        [global::Microsoft.AspNetCore.Components.InjectAttribute] private UserManager<IdentityUser> UserManager { get; set; }
-        [global::Microsoft.AspNetCore.Components.InjectAttribute] private SignInManager<IdentityUser> SignInManager { get; set; }
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private NavigationManager NavManager { get; set; }
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private LoginState loginState { get; set; }
     }
 }
 #pragma warning restore 1591

@@ -119,12 +119,14 @@ using Clases;
         }
         #pragma warning restore 1998
 #nullable restore
-#line 119 "C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\Pages\ReservasEditar - Copy.razor"
+#line 125 "C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\Pages\ReservasEditar - Copy.razor"
  
     int Id = 0;
     Reserva reserva = new Reserva();
 
-    List<Pais> Paises_Origen = new List<Pais>();
+    //String hora = "12:30";
+
+    List<Pais> Paises_Origen = new List<Pais>(); //listado de los países existentes
     List<Pais> Paises_Destino = new List<Pais>();
 
     List<Puerto> Puertos_Origen = new List<Puerto>();
@@ -220,25 +222,39 @@ using Clases;
         String connString = config.GetConnectionString("MySqlNaviera");
         using var connection = new MySqlConnection(connString);
         {
+            String q = "";
+
             connection.Open();
-            String q = "UPDATE reserva_contenedor SET ";
-            q = q + "empresa = '" + reserva.Empresa + "',";
-            q = q + " nit = '" + reserva.Nit + "',";
-            q = q + " direccion = '" + reserva.Direccion + "',";
-            q = q + " puerto_origen = '" + reserva.Puerto_Origen + "',";
-            q = q + " pais_origen = '" + reserva.Pais_Origen + "',";
-            q = q + " puerto_destino = '" + reserva.Puerto_Destino + "',";
-            q = q + " pais_destino = '" + reserva.Pais_Destino + "',";
-            q = q + " receptor = '" + reserva.Receptor + "',";
-            q = q + " contraseña_recepcion = '" + reserva.Contraseña_Recepcion + "',";
-            q = q + " tipo_carga = '" + reserva.Tipo_Carga + "',";
-            q = q + " descripcion_carga = '" + reserva.Descripcion + "',";
-            q = q + " peso_carga = '" + reserva.Peso + "',";
-            q = q + " valor_carga = '" + reserva.Valor + "',";
-            q = q + " tipo_contenedor = '" + reserva.Tipo_Contenedor + "'";
+            if (reserva.Id > 0)
+            {
+                q = "UPDATE reserva_contenedor SET ";
+                q = q + "empresa = '" + reserva.Empresa + "',";
+                q = q + " nit = '" + reserva.Nit + "',";
+                q = q + " direccion = '" + reserva.Direccion + "',";
+                q = q + " puerto_origen = '" + reserva.Puerto_Origen + "',";
+                q = q + " pais_origen = '" + reserva.Pais_Origen + "',";
+                q = q + " hora_salida = '" + reserva.Hora_Salida + "',";
+                q = q + " puerto_destino = '" + reserva.Puerto_Destino + "',";
+                q = q + " pais_destino = '" + reserva.Pais_Destino + "',";
+                q = q + " hora_llegada = '" + reserva.Hora_Llegada + "',";
+                q = q + " receptor = '" + reserva.Receptor + "',";
+                q = q + " contraseña_recepcion = '" + reserva.Contraseña_Recepcion + "',";
+                q = q + " tipo_carga = '" + reserva.Tipo_Carga + "',";
+                q = q + " descripcion_carga = '" + reserva.Descripcion + "',";
+                q = q + " peso_carga = '" + reserva.Peso + "',";
+                q = q + " valor_carga = '" + reserva.Valor + "',";
+                q = q + " tipo_contenedor = '" + reserva.Tipo_Contenedor + "'";
 
-            q = q + " where codigo_contenedor = '" + reserva.Codigo + "'";
+                q = q + " where id = '" + reserva.Id + "'";
+            }
+            else
+            {
+                reserva.Codigo = reserva.Tipo_Contenedor.Substring(0, 2) + reserva.Puerto_Origen + reserva.Pais_Origen + reserva.Pais_Destino; //substring(posicion que empieza, longitud)
+                reserva.Contraseña_Recepcion = Guid.NewGuid().ToString("N").Substring(0, 6); //generar numeros random, es una funcion ya por los sistemas para generar un id unico
 
+                q = q + "INSERT INTO reserva_contenedor(codigo_contenedor, empresa, nit, direccion, puerto_origen, pais_origen, hora_salida, puerto_destino, pais_destino, hora_llegada, receptor, contraseña_recepcion, tipo_carga, descripcion_carga, peso_carga, valor_carga, tipo_contenedor)" +
+                    " values ('" + reserva.Codigo + "','" + reserva.Empresa + "','" + reserva.Nit + "','" + reserva.Direccion + "','" + reserva.Puerto_Origen + "','" + reserva.Pais_Origen + "','" + reserva.Hora_Salida + "','" + reserva.Puerto_Destino + "','" + reserva.Pais_Destino + "','" + reserva.Hora_Llegada + "','" + reserva.Receptor + "','" + reserva.Contraseña_Recepcion + "','" + reserva.Tipo_Carga + "','" + reserva.Descripcion + "','" + reserva.Peso + "','" + reserva.Valor + "','" + reserva.Tipo_Contenedor + "')";
+            }
             using var command = new MySqlCommand(q, connection);
             var resultado = command.ExecuteNonQuery();
         }
@@ -269,15 +285,17 @@ using Clases;
             using var reader = command.ExecuteReader();
             while (reader.Read())
             {
-                reserva.Id = (int) reader["id"];
+                reserva.Id = (int)reader["id"];
                 reserva.Codigo = reader["Codigo_contenedor"].ToString();
                 reserva.Empresa = reader["Empresa"].ToString();
                 reserva.Nit = reader["Nit"].ToString();
                 reserva.Direccion = reader["Direccion"].ToString();
                 reserva.Puerto_Origen = reader["Puerto_Origen"].ToString();
                 reserva.Pais_Origen = reader["Pais_Origen"].ToString();
+                reserva.Hora_Salida = reader["Hora_Salida"].ToString();
                 reserva.Puerto_Destino = reader["Puerto_Destino"].ToString();
                 reserva.Pais_Destino = reader["Pais_Destino"].ToString();
+                reserva.Hora_Llegada = reader["Hora_Llegada"].ToString();
                 reserva.Receptor = reader["Receptor"].ToString();
                 reserva.Contraseña_Recepcion = reader["Contraseña_Recepcion"].ToString();
                 reserva.Tipo_Carga = reader["Tipo_Carga"].ToString();

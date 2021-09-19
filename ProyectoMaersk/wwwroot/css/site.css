@@ -16,6 +16,14 @@ primary {
     background-color: #778DA9!important;
 }
 
+.bg-secondary {
+    background-color: #E0E1DD !important;
+}
+
+.bg-tertiary {
+    background-color: #43b4d4 !important;
+}
+
 .btn-primary {
     color: #000;
     background-color: #E0E1DD;
@@ -42,6 +50,12 @@ primary {
 
 .validation-message {
     color: red;
+}
+
+.Error{
+  icon: 'error';
+  title: 'Error...';
+  text: 'Usuario o contraseña inválidos.';
 }
 
 #blazor-error-ui {

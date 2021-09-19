@@ -81,7 +81,7 @@
             if (Texto != "")
             {
                 q = q + " where tipo_empleado ='" + Texto + "' ";
-                q = q + "or contraseña ='" + Texto + "' ";
+                //q = q + "or contraseña ='" + Texto + "' ";
                 q = q + "or codigo_empleado ='" + Texto + "' ";
                 q = q + "or nombre ='" + Texto + "' ";
                 q = q + "or puerto ='" + Texto + "' ";
@@ -124,7 +124,7 @@
                 var resultado = command.ExecuteNonQuery();
             }
         }
-        NavManager.NavigateTo("/Personal");
+        NavManager.NavigateTo("/Personal", true);
     }
 
     private void buscar(string Texto)

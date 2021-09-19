@@ -159,6 +159,7 @@ using Clases;
                     }
                 }
             }
+
             //puertos
             using var command2 = new MySqlCommand("SELECT * FROM puertos;", connection);
             {
@@ -174,6 +175,7 @@ using Clases;
                     }
                 }
             }
+
             //cargas
             using var command3 = new MySqlCommand("SELECT * FROM tipo_carga;", connection);
             {
@@ -187,6 +189,7 @@ using Clases;
                     }
                 }
             }
+
             //valores
             using var command4 = new MySqlCommand("SELECT * FROM valores;", connection);
             {
@@ -200,6 +203,7 @@ using Clases;
                     }
                 }
             }
+
             //contenedores
             using var command5 = new MySqlCommand("SELECT * FROM tipo_contenedores;", connection);
             {

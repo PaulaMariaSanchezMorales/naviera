@@ -83,28 +83,28 @@ using ProyectoMaersk.Shared;
 #line hidden
 #nullable disable
 #nullable restore
-#line 1 "C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\Pages\Personal.razor"
+#line 1 "C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\Pages\Personal - Copy.razor"
 using Microsoft.Extensions.Configuration;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 2 "C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\Pages\Personal.razor"
+#line 2 "C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\Pages\Personal - Copy.razor"
 using MySqlConnector;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 3 "C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\Pages\Personal.razor"
+#line 3 "C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\Pages\Personal - Copy.razor"
 using Clases;
 
 #line default
 #line hidden
 #nullable disable
     [Microsoft.AspNetCore.Components.RouteAttribute("/Personal")]
-    public partial class Personal : Microsoft.AspNetCore.Components.ComponentBase
+    public partial class Personal___Copy : Microsoft.AspNetCore.Components.ComponentBase
     {
         #pragma warning disable 1998
         protected override void BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder __builder)
@@ -112,7 +112,7 @@ using Clases;
         }
         #pragma warning restore 1998
 #nullable restore
-#line 68 "C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\Pages\Personal.razor"
+#line 68 "C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\Pages\Personal - Copy.razor"
  
     private List<Usuarios> usuarios = new List<Usuarios>();
     Busqueda busqueda = new Busqueda();
@@ -129,7 +129,7 @@ using Clases;
             if (Texto != "")
             {
                 q = q + " where tipo_empleado ='" + Texto + "' ";
-                //q = q + "or contraseña ='" + Texto + "' ";
+                q = q + "or contraseña ='" + Texto + "' ";
                 q = q + "or codigo_empleado ='" + Texto + "' ";
                 q = q + "or nombre ='" + Texto + "' ";
                 q = q + "or puerto ='" + Texto + "' ";
@@ -172,7 +172,7 @@ using Clases;
                 var resultado = command.ExecuteNonQuery();
             }
         }
-        NavManager.NavigateTo("/Personal", true);
+        NavManager.NavigateTo("/Personal");
     }
 
     private void buscar(string Texto)
