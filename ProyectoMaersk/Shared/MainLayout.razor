@@ -10,14 +10,14 @@
     </div>
 
     <div class="main">
-        <div class="top-row px-4 auth" style="background-color:#778DA9">
+        <div class="top-row px-4 auth" style="background-color:#778DA9"> <!--hasta arriba de la página se ingresa a Login-->
             @if (!loginState.IsLoggedIn)
             {
                 <a href="Login" class="text-white">Log in</a>
             }
         </div>
 
-        <div class="content px-4">
+        <div class="content px-4"> <!--si se puede entrar se muestra el body-->
             @Body
         </div>
     </div>

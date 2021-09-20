@@ -1,4 +1,4 @@
-﻿@using ProyectoMaersk.Clases
+﻿@using ProyectoMaersk.Clases <!--crear todas las clases ya creadas-->
 @inject Microsoft.Extensions.Configuration.IConfiguration config
 @inject LoginState loginState
 @inject NavigationManager NavManager
@@ -30,7 +30,7 @@
                     </div>
                 </div>
             </li>
-            @if (loginState.EsAdministrador)
+            @if (loginState.EsAdministrador) <!--si el usuario es administrador si aparece en el manú la parte de personal, de lo contrario no-->
             {
                 <li class="nav-item px-3">
                     <NavLink class="nav-link" href="personal">
