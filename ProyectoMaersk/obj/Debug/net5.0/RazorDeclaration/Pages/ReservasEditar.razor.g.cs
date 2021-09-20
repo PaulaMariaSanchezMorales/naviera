@@ -119,7 +119,7 @@ using Clases;
         }
         #pragma warning restore 1998
 #nullable restore
-#line 125 "C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\Pages\ReservasEditar.razor"
+#line 134 "C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\Pages\ReservasEditar.razor"
  
     int Id = 0;
     Reserva reserva = new Reserva();
@@ -137,6 +137,76 @@ using Clases;
     List<Valor> Valores = new List<Valor>();
 
     List<Tipo_contenedor> Tipo_Contenedores = new List<Tipo_contenedor>();
+
+    //para que los puertos que aparezcan solo sean los del país seleccionado
+    //puertos de origen
+    void LlenaPuertosOrigen(String Pais)
+    {
+        //puerto origen
+        Puertos_Origen.Clear();
+        String connString = config.GetConnectionString("MySqlNaviera");
+        using var connectionPuertos = new MySqlConnection(connString);
+        {
+            connectionPuertos.Open();
+
+            using var commandPuertos = new MySqlCommand("SELECT * FROM puertos where pais = '" + Pais + "'", connectionPuertos);
+            {
+                using var readerPuertos = commandPuertos.ExecuteReader();
+                {
+                    while (readerPuertos.Read())
+                    {
+                        var puerto = new Puerto();
+                        puerto.Codigo = readerPuertos["codigo"].ToString();
+                        puerto.Nombre = readerPuertos["nombre"].ToString();
+                        Puertos_Origen.Add(puerto);
+                    }
+                }
+            }
+        }
+    }
+    void Llena_Puertos_Origen_Evento(ChangeEventArgs e)
+    {
+        // Recibe como parametro el dato que cambio en e.value
+        String Pais = e.Value.ToString();
+        reserva.Puerto_Origen = "";
+        LlenaPuertosOrigen(Pais);
+    }
+
+    //para que los puertos que aparezcan solo sean los del país seleccionado
+    //puertos destino
+    void LlenaPuertosDestino(String Pais)
+    {
+        //puerto origen
+        Puertos_Destino.Clear();
+        String connString = config.GetConnectionString("MySqlNaviera");
+        using var connectionPuertos = new MySqlConnection(connString);
+        {
+            connectionPuertos.Open();
+
+            using var commandPuertos = new MySqlCommand("SELECT * FROM puertos where pais = '" + Pais + "'", connectionPuertos);
+            {
+                using var readerPuertos = commandPuertos.ExecuteReader();
+                {
+                    while (readerPuertos.Read())
+                    {
+                        var puerto = new Puerto();
+                        puerto.Codigo = readerPuertos["codigo"].ToString();
+                        puerto.Nombre = readerPuertos["nombre"].ToString();
+                        Puertos_Destino.Add(puerto);
+                    }
+                }
+            }
+        }
+    }
+    void Llena_Puertos_Destino_Evento(ChangeEventArgs e)
+    {
+        // Recibe como parametro el dato que cambio en e.value
+        String Pais = e.Value.ToString();
+        reserva.Puerto_Destino = "";
+        LlenaPuertosDestino(Pais);
+    }
+
+
 
     void Llena_Combos() //no regresa ningún resultado void (lista de todos lo países)
     {
@@ -156,22 +226,6 @@ using Clases;
                         pais.Nombre = reader1["nombre"].ToString();
                         Paises_Origen.Add(pais);
                         Paises_Destino.Add(pais);
-                    }
-                }
-            }
-
-            //puertos
-            using var command2 = new MySqlCommand("SELECT * FROM puertos;", connection);
-            {
-                using var reader2 = command2.ExecuteReader();
-                {
-                    while (reader2.Read())
-                    {
-                        var puerto = new Puerto();
-                        puerto.Codigo = reader2["codigo"].ToString();
-                        puerto.Nombre = reader2["nombre"].ToString();
-                        Puertos_Origen.Add(puerto);
-                        Puertos_Destino.Add(puerto);
                     }
                 }
             }
@@ -296,10 +350,14 @@ using Clases;
                 reserva.Direccion = reader["Direccion"].ToString();
                 reserva.Puerto_Origen = reader["Puerto_Origen"].ToString();
                 reserva.Pais_Origen = reader["Pais_Origen"].ToString();
-                reserva.Hora_Salida = reader["Hora_Salida"].ToString();
+                DateTime f1;
+                DateTime.TryParse(reader["Hora_Salida"].ToString(), out f1);
+                reserva.Hora_Salida = f1.ToString("yyyy-MM-ddTHH:mm");
                 reserva.Puerto_Destino = reader["Puerto_Destino"].ToString();
                 reserva.Pais_Destino = reader["Pais_Destino"].ToString();
-                reserva.Hora_Llegada = reader["Hora_Llegada"].ToString();
+                DateTime f2;
+                DateTime.TryParse(reader["Hora_Llegada"].ToString(), out f2);
+                reserva.Hora_Llegada = f2.ToString("yyyy-MM-ddTHH:mm");
                 reserva.Receptor = reader["Receptor"].ToString();
                 reserva.Contraseña_Recepcion = reader["Contraseña_Recepcion"].ToString();
                 reserva.Tipo_Carga = reader["Tipo_Carga"].ToString();
@@ -307,6 +365,7 @@ using Clases;
                 reserva.Peso = reader["Peso_carga"].ToString();
                 reserva.Valor = reader["Valor_carga"].ToString();
                 reserva.Tipo_Contenedor = reader["Tipo_Contenedor"].ToString();
+                LlenaPuertosOrigen(reserva.Pais_Origen);
             }
         }
     }

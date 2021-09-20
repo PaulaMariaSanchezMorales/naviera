@@ -112,7 +112,7 @@ using Clases;
         }
         #pragma warning restore 1998
 #nullable restore
-#line 68 "C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\Pages\Personal.razor"
+#line 72 "C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\Pages\Personal.razor"
  
     private List<Usuarios> usuarios = new List<Usuarios>();
     Busqueda busqueda = new Busqueda();
@@ -129,7 +129,7 @@ using Clases;
             if (Texto != "")
             {
                 q = q + " where tipo_empleado ='" + Texto + "' ";
-                //q = q + "or contraseña ='" + Texto + "' ";
+                q = q + "or contraseña ='" + Texto + "' ";
                 q = q + "or codigo_empleado ='" + Texto + "' ";
                 q = q + "or nombre ='" + Texto + "' ";
                 q = q + "or puerto ='" + Texto + "' ";
@@ -149,6 +149,19 @@ using Clases;
                 usuario.Puerto = reader["Puerto"].ToString();
                 usuario.Pais = reader["Pais"].ToString();
 
+                //para que aparezca el nombre del puerto y no el código
+                using var connectionPO = new MySqlConnection(connString);
+                {
+                    connectionPO.Open();
+
+                    string qPO = "SELECT * FROM puertos where codigo = '" + usuario.Puerto + "'";
+                    using var commandPO = new MySqlCommand(qPO, connectionPO);
+                    using var readerPO = commandPO.ExecuteReader(); //devuelve un objeto para poder hacer consultas, en este caso q
+                    if (readerPO.Read())
+                    {
+                        usuario.Nombre_Puerto = readerPO["nombre"].ToString();
+                    }
+                }
                 usuarios.Add(usuario);
             }
         }
@@ -186,6 +199,7 @@ using Clases;
 #nullable disable
         [global::Microsoft.AspNetCore.Components.InjectAttribute] private NavigationManager NavManager { get; set; }
         [global::Microsoft.AspNetCore.Components.InjectAttribute] private Microsoft.Extensions.Configuration.IConfiguration config { get; set; }
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private LoginState loginState { get; set; }
     }
 }
 #pragma warning restore 1591

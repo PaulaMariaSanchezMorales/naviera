@@ -12,7 +12,8 @@
 <p>Modificar reservas</p>
 
 <div class="container">
-    <EditForm Model=@reserva OnSubmit="@grabar">
+    <EditForm Model=@reserva OnValidSubmit="@grabar">
+        <DataAnnotationsValidator />
         <div class="form-group">
             <label for="codigo">Codigo</label>
             <InputText @bind-Value="reserva.Codigo" readonly class="form-control" id="codigo" />
@@ -31,7 +32,9 @@
         </div>
         <div class="form-group">
             <label for="paisorigen">Pais Origen</label>
-            <InputSelect @bind-Value="reserva.Pais_Origen" class="form-control" id="paisorigen">
+            <InputSelect @bind-Value="reserva.Pais_Origen" class="form-control" id="paisorigen" @oninput="Llena_Puertos_Origen_Evento">
+                <!--se llama a la funcion de LLena puertos al momento inmediato en el que un país es seleccionado para que solo ese puerto quede de opción-->
+                <option value="">Elegir...</option>
                 @foreach (var pais in Paises_Origen)
                 {
                     <option value="@pais.Codigo">@pais.Nombre</option>
@@ -42,6 +45,7 @@
         <div class="form-group">
             <label for="puertoorigen">Puerto Origen</label>
             <InputSelect @bind-Value="reserva.Puerto_Origen" class="form-control" id="puertoorigen">
+                <option value="">Elegir...</option>
                 @foreach (var puerto in Puertos_Origen)
                 {
                     <option value="@puerto.Codigo">@puerto.Nombre</option>
@@ -54,7 +58,8 @@
         </div>
         <div class="form-group">
             <label for="paisdestino">Pais Destino</label>
-            <InputSelect @bind-Value="reserva.Pais_Destino" class="form-control" id="paisdestino">
+            <InputSelect @bind-Value="reserva.Pais_Destino" class="form-control" id="paisdestino" @oninput="Llena_Puertos_Destino_Evento">
+                <option value="">Elegir...</option>
                 @foreach (var pais in Paises_Destino)
                 {
                     <option value="@pais.Codigo">@pais.Nombre</option>
@@ -64,6 +69,7 @@
         <div class="form-group">
             <label for="puertodestino">Puerto Destino</label>
             <InputSelect @bind-Value="reserva.Puerto_Destino" class="form-control" id="puertodestino">
+                <option value="">Elegir...</option>
                 @foreach (var puerto in Puertos_Destino)
                 {
                     <option value="@puerto.Codigo">@puerto.Nombre</option>
@@ -85,6 +91,7 @@
         <div class="form-group">
             <label for="tipocarga">Tipo de Carga</label>
             <InputSelect @bind-Value="reserva.Tipo_Carga" class="form-control" id="tipocarga">
+                <option value="">Elegir...</option>
                 @foreach (var carga in Tipo_Carga)
                 {
                     <option value="@carga.Nombre">@carga.Nombre</option>
@@ -102,6 +109,7 @@
         <div class="form-group">
             <label for="valor">Valor</label>
             <InputSelect @bind-Value="reserva.Valor" class="form-control" id="valor">
+                <option value="">Elegir...</option>
                 @foreach (var valor in Valores)
                 {
                     <option value="@valor.Cantidad">@valor.Cantidad</option>
@@ -111,13 +119,14 @@
         <div class="form-group">
             <label for="tipocontenedor">Tipo de Contenedor</label>
             <InputSelect @bind-Value="reserva.Tipo_Contenedor" class="form-control" id="tipocontenedor">
+                <option value="">Elegir...</option>
                 @foreach (var contenedor in Tipo_Contenedores)
                 {
                     <option value="@contenedor.Nombre">@contenedor.Nombre</option>
                 }
             </InputSelect>
         </div>
-        <button class="btn btn-primary text-dark">Enviar</button>
+        <input type="submit" class="btn btn-primary text-dark" value="Enviar" />
     </EditForm>
 </div>
 
@@ -140,6 +149,76 @@
 
     List<Tipo_contenedor> Tipo_Contenedores = new List<Tipo_contenedor>();
 
+    //para que los puertos que aparezcan solo sean los del país seleccionado
+    //puertos de origen
+    void LlenaPuertosOrigen(String Pais)
+    {
+        //puerto origen
+        Puertos_Origen.Clear();
+        String connString = config.GetConnectionString("MySqlNaviera");
+        using var connectionPuertos = new MySqlConnection(connString);
+        {
+            connectionPuertos.Open();
+
+            using var commandPuertos = new MySqlCommand("SELECT * FROM puertos where pais = '" + Pais + "'", connectionPuertos);
+            {
+                using var readerPuertos = commandPuertos.ExecuteReader();
+                {
+                    while (readerPuertos.Read())
+                    {
+                        var puerto = new Puerto();
+                        puerto.Codigo = readerPuertos["codigo"].ToString();
+                        puerto.Nombre = readerPuertos["nombre"].ToString();
+                        Puertos_Origen.Add(puerto);
+                    }
+                }
+            }
+        }
+    }
+    void Llena_Puertos_Origen_Evento(ChangeEventArgs e)
+    {
+        // Recibe como parametro el dato que cambio en e.value
+        String Pais = e.Value.ToString();
+        reserva.Puerto_Origen = "";
+        LlenaPuertosOrigen(Pais);
+    }
+
+    //para que los puertos que aparezcan solo sean los del país seleccionado
+    //puertos destino
+    void LlenaPuertosDestino(String Pais)
+    {
+        //puerto origen
+        Puertos_Destino.Clear();
+        String connString = config.GetConnectionString("MySqlNaviera");
+        using var connectionPuertos = new MySqlConnection(connString);
+        {
+            connectionPuertos.Open();
+
+            using var commandPuertos = new MySqlCommand("SELECT * FROM puertos where pais = '" + Pais + "'", connectionPuertos);
+            {
+                using var readerPuertos = commandPuertos.ExecuteReader();
+                {
+                    while (readerPuertos.Read())
+                    {
+                        var puerto = new Puerto();
+                        puerto.Codigo = readerPuertos["codigo"].ToString();
+                        puerto.Nombre = readerPuertos["nombre"].ToString();
+                        Puertos_Destino.Add(puerto);
+                    }
+                }
+            }
+        }
+    }
+    void Llena_Puertos_Destino_Evento(ChangeEventArgs e)
+    {
+        // Recibe como parametro el dato que cambio en e.value
+        String Pais = e.Value.ToString();
+        reserva.Puerto_Destino = "";
+        LlenaPuertosDestino(Pais);
+    }
+
+
+
     void Llena_Combos() //no regresa ningún resultado void (lista de todos lo países)
     {
         String connString = config.GetConnectionString("MySqlNaviera");
@@ -158,22 +237,6 @@
                         pais.Nombre = reader1["nombre"].ToString();
                         Paises_Origen.Add(pais);
                         Paises_Destino.Add(pais);
-                    }
-                }
-            }
-
-            //puertos
-            using var command2 = new MySqlCommand("SELECT * FROM puertos;", connection);
-            {
-                using var reader2 = command2.ExecuteReader();
-                {
-                    while (reader2.Read())
-                    {
-                        var puerto = new Puerto();
-                        puerto.Codigo = reader2["codigo"].ToString();
-                        puerto.Nombre = reader2["nombre"].ToString();
-                        Puertos_Origen.Add(puerto);
-                        Puertos_Destino.Add(puerto);
                     }
                 }
             }
@@ -298,10 +361,14 @@
                 reserva.Direccion = reader["Direccion"].ToString();
                 reserva.Puerto_Origen = reader["Puerto_Origen"].ToString();
                 reserva.Pais_Origen = reader["Pais_Origen"].ToString();
-                reserva.Hora_Salida = reader["Hora_Salida"].ToString();
+                DateTime f1;
+                DateTime.TryParse(reader["Hora_Salida"].ToString(), out f1);
+                reserva.Hora_Salida = f1.ToString("yyyy-MM-ddTHH:mm");
                 reserva.Puerto_Destino = reader["Puerto_Destino"].ToString();
                 reserva.Pais_Destino = reader["Pais_Destino"].ToString();
-                reserva.Hora_Llegada = reader["Hora_Llegada"].ToString();
+                DateTime f2;
+                DateTime.TryParse(reader["Hora_Llegada"].ToString(), out f2);
+                reserva.Hora_Llegada = f2.ToString("yyyy-MM-ddTHH:mm");
                 reserva.Receptor = reader["Receptor"].ToString();
                 reserva.Contraseña_Recepcion = reader["Contraseña_Recepcion"].ToString();
                 reserva.Tipo_Carga = reader["Tipo_Carga"].ToString();
@@ -309,6 +376,7 @@
                 reserva.Peso = reader["Peso_carga"].ToString();
                 reserva.Valor = reader["Valor_carga"].ToString();
                 reserva.Tipo_Contenedor = reader["Tipo_Contenedor"].ToString();
+                LlenaPuertosOrigen(reserva.Pais_Origen);
             }
         }
     }

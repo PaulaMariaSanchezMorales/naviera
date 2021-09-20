@@ -115,60 +115,77 @@ using Clases;
 #nullable restore
 #line 53 "C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\Pages\LogIn.razor"
  
-        private DataLogIn login = new DataLogIn();
+    private DataLogIn login = new DataLogIn();
 
-        public void ingresar()
+    public void ingresar()
+    {
+        String connString = config.GetConnectionString("MySqlNaviera");
+
+        loginState.SetLogin(true, login.Usuario);
+        lee_usuarios(login.Usuario, login.Contraseña);
+        if (login.Error == "")
         {
-            loginState.SetLogin(true, login.Usuario);
-            lee_usuarios(login.Usuario, login.Contraseña);
-            if (login.Error == "")
+            if (loginState.EsAdministrador)
+            {
+                NavManager.NavigateTo("/Personal");
+            }
+            else
             {
                 NavManager.NavigateTo("/");
             }
         }
+    }
 
-        public void lee_usuarios(String usuario, String contraseña)
+    public void lee_usuarios(String usuario, String contraseña)
+    {
+
+        loginState.nombre = "";
+        loginState.codigo = "";
+        loginState.IsLoggedIn = false;
+        loginState.EsAdministrador = false;
+        login.Error = "";
+
+        String connString = config.GetConnectionString("MySqlNaviera");
+        using var connection = new MySqlConnection(connString);
         {
+            connection.Open();
 
-            loginState.nombre = "";
-            loginState.codigo = "";
-            loginState.IsLoggedIn = false;
-            login.Error = "";
+            string q = "";
 
-            String connString = config.GetConnectionString("MySqlNaviera");
-            using var connection = new MySqlConnection(connString);
+            if (login.Usuario == "" || login.Contraseña == "")
             {
-                connection.Open();
+                login.Error = "Usuario o contraseña inválidos";
+            }
+            else
+            {
+                q = "SELECT * FROM usuarios";
+                q = q + " where codigo_empleado ='" + login.Usuario + "' ";
+                q = q + "and contraseña ='" + login.Contraseña + "'";
 
-                string q = "";
-
-                if (login.Usuario == "" || login.Contraseña == "")
+                using var command = new MySqlCommand(q, connection);
+                using var reader = command.ExecuteReader();
+                if (reader.Read())
                 {
-                    login.Error = "Debe ingresar un usuario y una contraseña";
-                }
-                else
-                {
-                    q = "SELECT * FROM usuarios";
-                    q = q + " where codigo_empleado ='" + login.Usuario + "' ";
-                    q = q + "and contraseña ='" + login.Contraseña + "'";
-
-                    using var command = new MySqlCommand(q, connection);
-                    using var reader = command.ExecuteReader();
-                    if (reader.Read())
+                    loginState.nombre = reader["Nombre"].ToString();
+                    loginState.codigo = reader["Codigo_empleado"].ToString();
+                    loginState.IsLoggedIn = true;
+                    if (reader["tipo_empleado"].ToString() == "Administrador")
                     {
-                        loginState.nombre = reader["Nombre"].ToString();
-                        loginState.codigo = reader["Codigo_empleado"].ToString();
-                        loginState.IsLoggedIn = true;
+                        loginState.EsAdministrador = true;
                     }
                     else
                     {
-                        login.Error = "Usuario o contraseña invalidos";
+                        loginState.EsAdministrador = false;
                     }
                 }
-
+                else
+                {
+                    login.Error = "Usuario o contraseña inválidos";
+                }
             }
+
         }
-    
+    }
 
 #line default
 #line hidden

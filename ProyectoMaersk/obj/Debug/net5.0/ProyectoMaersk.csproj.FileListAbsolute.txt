@@ -284,7 +284,6 @@ C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMa
 C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\obj\Debug\net5.0\ProyectoMaersk.MvcApplicationPartsAssemblyInfo.cache
 C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\obj\Debug\net5.0\ProyectoMaersk.RazorComponent.input.cache
 C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\obj\Debug\net5.0\RazorDeclaration\App.razor.g.cs
-C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\obj\Debug\net5.0\RazorDeclaration\Pages\Counter.razor.g.cs
 C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\obj\Debug\net5.0\RazorDeclaration\Pages\FetchData.razor.g.cs
 C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\obj\Debug\net5.0\RazorDeclaration\Pages\Index.razor.g.cs
 C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\obj\Debug\net5.0\RazorDeclaration\Pages\Personal.razor.g.cs
@@ -298,7 +297,6 @@ C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMa
 C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\obj\Debug\net5.0\ProyectoMaersk.TagHelpers.output.cache
 C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\obj\Debug\net5.0\ProyectoMaersk.RazorCoreGenerate.cache
 C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\obj\Debug\net5.0\Razor\App.razor.g.cs
-C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\obj\Debug\net5.0\Razor\Pages\Counter.razor.g.cs
 C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\obj\Debug\net5.0\Razor\Pages\FetchData.razor.g.cs
 C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\obj\Debug\net5.0\Razor\Pages\Index.razor.g.cs
 C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\obj\Debug\net5.0\Razor\Pages\Personal.razor.g.cs

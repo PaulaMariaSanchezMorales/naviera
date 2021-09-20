@@ -97,11 +97,14 @@ using ProyectoMaersk.Clases;
         }
         #pragma warning restore 1998
 #nullable restore
-#line 59 "C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\Shared\NavMenu.razor"
+#line 63 "C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\Shared\NavMenu.razor"
        
+
+    string connString = "";
     private bool collapseNavMenu = true;
 
     private string NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+
 
     private void ToggleNavMenu()
     {
@@ -121,6 +124,7 @@ using ProyectoMaersk.Clases;
 #nullable disable
         [global::Microsoft.AspNetCore.Components.InjectAttribute] private NavigationManager NavManager { get; set; }
         [global::Microsoft.AspNetCore.Components.InjectAttribute] private LoginState loginState { get; set; }
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private Microsoft.Extensions.Configuration.IConfiguration config { get; set; }
     }
 }
 #pragma warning restore 1591

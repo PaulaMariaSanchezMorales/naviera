@@ -2,66 +2,75 @@
 @using Microsoft.Extensions.Configuration
 @using MySqlConnector
 @using Clases
+@inject LoginState loginState //para poder usar el loginState
 @inject Microsoft.Extensions.Configuration.IConfiguration config
 @inject NavigationManager NavManager
+
 @page "/PersonalEditar"
 
-<h1>Personal</h1>
+@if (loginState.EsAdministrador)
+{
+    <h1>Personal</h1>
 
-<p>Modificar personal</p>
+    <p>Modificar personal</p>
 
-<div class="container">
-    <EditForm Model=@usuario OnSubmit="@grabar">
-        <div class="form-group">
-            <label for="tipoempleado">Tipo de empleado</label>
-            <InputSelect @bind-Value="usuario.Tipo" class="form-control" id="tipoempleado">
-                @foreach (var tipo_empleado in Tipo_empleados)
+    <div class="container">
+        <EditForm Model=@usuario OnValidSubmit="@grabar">
+            <DataAnnotationsValidator />
+            <div class="form-group">
+                <label for="tipoempleado">Tipo de empleado</label>
+                <InputSelect @bind-Value="usuario.Tipo" class="form-control" id="tipoempleado">
+                    <option value="">Elegir...</option>
+                    @foreach (var tipo_empleado in Tipo_empleados)
+                        {
+                        <option value="@tipo_empleado.Nombre">@tipo_empleado.Nombre</option>
+                        }
+                </InputSelect>
+            </div>
+            <div class="form-group">
+                <label for="nombre">Nombre</label>
+                <InputText @bind-Value="usuario.Nombre" class="form-control" id="nombre" />
+            </div>
+            <div class="form-group">
+                <label for="contraseña">Contraseña</label>
+                <InputText @bind-Value="usuario.Contraseña" class="form-control" id="contraseña" />
+            </div>
+            <div class="form-group">
+                <label for="codigo">Código de empleado</label>
+                <!--generar el código de empleado, verificando el Id-->
+                @if (usuario.Id > 0)
                 {
-                    <option value="@tipo_empleado.Nombre">@tipo_empleado.Nombre</option>
+                    <InputText @bind-Value="usuario.Codigo" readonly class="form-control" id="codigo" />
                 }
-            </InputSelect>
-        </div>
-        <div class="form-group">
-            <label for="nombre">Nombre</label>
-            <InputText @bind-Value="usuario.Nombre" class="form-control" id="nombre" />
-        </div>
-        <div class="form-group">
-            <label for="contraseña">Contraseña</label>
-            <InputText @bind-Value="usuario.Contraseña" class="form-control" id="contraseña" />
-        </div>
-        <div class="form-group">
-            <label for="codigo">Código de empleado</label>
-            @if (usuario.Id > 0)
-            {
-                <InputText @bind-Value="usuario.Codigo" readonly class="form-control" id="codigo" />
-
-            }
-            else
-            {
-                <InputText @bind-Value="usuario.Codigo" readonly class="form-control" id="codigo" />
-            }
-        </div>
-        <div class="form-group">
-            <label for="pais">Pais</label>
-            <InputSelect @bind-Value="usuario.Pais" class="form-control" id="pais">
-                @foreach (var pais in Paises)
+                else
                 {
-                    <option value="@pais.Codigo">@pais.Nombre</option>
+                    <InputText @bind-Value="usuario.Codigo" readonly class="form-control" id="codigo" />
                 }
-            </InputSelect>
-        </div>
-        <div class="form-group">
-            <label for="puerto">Puerto</label>
-            <InputSelect @bind-Value="usuario.Puerto" class="form-control" id="puerto">
-                @foreach (var puerto in Puertos)
-                {
-                    <option value="@puerto.Codigo">@puerto.Nombre</option>
-                }
-            </InputSelect>
-        </div>
-        <button class="btn btn-primary text-dark">Enviar</button>
-    </EditForm>
-</div>
+            </div>
+            <div class="form-group">
+                <label for="pais">Pais</label>
+                <InputSelect @bind-Value="usuario.Pais" class="form-control" id="pais" @oninput="Llena_Puertos_Evento">
+                    <option value="">Elegir...</option>
+                    @foreach (var pais in Paises)
+                        {
+                        <option value="@pais.Codigo">@pais.Nombre</option>
+                        }
+                </InputSelect>
+            </div>
+            <div class="form-group">
+                <label for="puerto">Puerto</label>
+                <InputSelect @bind-Value="usuario.Puerto" class="form-control" id="puerto">
+                    <option value="">Elegir...</option>
+                    @foreach (var puerto in Puertos)
+                        {
+                        <option value="@puerto.Codigo">@puerto.Nombre</option>
+                        }
+                </InputSelect>
+            </div>
+            <input type="submit" class="btn btn-primary text-dark" value="Enviar" />
+        </EditForm>
+    </div>
+}
 
 @code
 {
@@ -71,6 +80,39 @@
     List<Tipo_empleado> Tipo_empleados = new List<Tipo_empleado>();
     List<Pais> Paises = new List<Pais>();
     List<Puerto> Puertos = new List<Puerto>();
+
+    void LlenaPuertos(String Pais)
+    {
+        //puertos
+        Puertos.Clear();
+        String connString = config.GetConnectionString("MySqlNaviera");
+        using var connectionPuertos = new MySqlConnection(connString);
+        {
+            //tipo de empleado
+            connectionPuertos.Open();
+
+            using var commandPuertos = new MySqlCommand("SELECT * FROM puertos where pais = '" + Pais + "'", connectionPuertos);
+            {
+                using var readerPuertos = commandPuertos.ExecuteReader();
+                {
+                    while (readerPuertos.Read())
+                    {
+                        var puerto = new Puerto();
+                        puerto.Codigo = readerPuertos["codigo"].ToString();
+                        puerto.Nombre = readerPuertos["nombre"].ToString();
+                        Puertos.Add(puerto);
+                    }
+                }
+            }
+        }
+    }
+    void Llena_Puertos_Evento(ChangeEventArgs e)
+    {
+        // Recibe como parametro el dato que cambio en e.value
+        String Pais = e.Value.ToString();
+        usuario.Puerto = "";
+        LlenaPuertos(Pais);
+    }
 
     void Llena_Combos() //no regresa ningún resultado void (lista de todos lo países)
     {
@@ -103,21 +145,6 @@
                         pais.Codigo = reader2["codigo"].ToString();
                         pais.Nombre = reader2["nombre"].ToString();
                         Paises.Add(pais);
-                    }
-                }
-            }
-
-            //puertos
-            using var command3 = new MySqlCommand("SELECT * FROM puertos;", connection);
-            {
-                using var reader3 = command3.ExecuteReader();
-                {
-                    while (reader3.Read())
-                    {
-                        var puerto = new Puerto();
-                        puerto.Codigo = reader3["codigo"].ToString();
-                        puerto.Nombre = reader3["nombre"].ToString();
-                        Puertos.Add(puerto);
                     }
                 }
             }
@@ -186,6 +213,7 @@
                 usuario.Nombre = reader["nombre"].ToString();
                 usuario.Puerto = reader["puerto"].ToString();
                 usuario.Pais = reader["pais"].ToString();
+                LlenaPuertos(usuario.Pais);
             }
         }
     }

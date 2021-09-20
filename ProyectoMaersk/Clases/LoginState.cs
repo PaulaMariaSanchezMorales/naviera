@@ -10,6 +10,7 @@ namespace ProyectoMaersk.Clases
         public bool IsLoggedIn { get; set; }
         public string codigo { get; set; }
         public string nombre { get; set; }
+        public bool EsAdministrador { get; set; }
 
         public event Action OnChange;
 

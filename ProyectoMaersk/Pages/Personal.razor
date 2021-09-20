@@ -1,68 +1,72 @@
 ﻿@using Microsoft.Extensions.Configuration
 @using MySqlConnector
 @using Clases
+@inject LoginState loginState
 @inject Microsoft.Extensions.Configuration.IConfiguration config
 @inject NavigationManager NavManager
 @page "/Personal"
 
-<h1>Personal</h1>
+@if (loginState.EsAdministrador)
+{
+    <h1>Personal</h1>
 
-<h4>Listado de personal</h4>
+    <h4>Listado de personal</h4>
 
-<div class="row">
-    <div class="col-10 mb-3">
-        <a class="btn btn-secondary text-dark" href="PersonalEditar" role="button">Agregar</a>
+    <div class="row">
+        <div class="col-10 mb-3">
+            <a class="btn btn-secondary text-dark" href="PersonalEditar" role="button">Agregar</a>
+        </div>
+        <div class="col-sm-2 mb-3">
+            <EditForm Model="@busqueda" class="form-inline">
+                <div class="form-group">
+                    <button class="btn btn-secondary" @onclick="() => buscar(busqueda.Texto)" role="button">
+                        <i class="oi oi-magnifying-glass text-dark"></i>
+                    </button>
+                    <InputText id="textobuscar" @bind-Value="busqueda.Texto" class="form-control" placeholder="Buscar" />
+                </div>
+            </EditForm>
+        </div>
     </div>
-    <div class="col-sm-2 mb-3">
-        <EditForm Model="@busqueda" class="form-inline">
-            <div class="form-group">
-                <button class="btn btn-secondary" @onclick="() => buscar(busqueda.Texto)" role="button">
-                    <i class="oi oi-magnifying-glass text-dark"></i>
-                </button>
-                <InputText id="textobuscar" @bind-Value="busqueda.Texto" class="form-control" placeholder="Buscar" />
-            </div>
-        </EditForm>
-    </div>
-</div>
-<table class="table table-sm">
-    <thead>
-        <tr class="bg-primary">
-            <!--<th>ID</th>-->
-            <th>Tipo de empleado</th>
-            <th>Contraseña</th>
-            <th>Codigo de empleado</th>
-            <th>Nombre</th>
-            <th>Puerto</th>
-            <th>País</th>
-            <th></th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var usuario in usuarios)
-        {
-        <tr>
-            <!--<td>@usuario.Id</td>-->
-            <td>@usuario.Tipo</td>
-            <td>@usuario.Contraseña</td>
-            <td>@usuario.Codigo</td>
-            <td>@usuario.Nombre</td>
-            <td>@usuario.Puerto</td>
-            <td>@usuario.Pais</td>
-            <td>
-                <a class="btn btn-secondary text-dark" href="PersonalEditar?Id=@usuario.Id" role="button">
-                    <i class="oi oi-pencil text-dark"></i>
-                </a>
-            </td>
-            <td>
-                <button class="btn btn-secondary" @onclick="() => borrar(usuario.Id)" role="button">
-                    <i class="oi oi-trash text-dark"></i>
-                </button>
-            </td>
-        </tr>
-        }
-    </tbody>
-</table>
+    <table class="table table-sm">
+        <thead>
+            <tr class="bg-primary">
+                <!--<th>ID</th>-->
+                <th>Tipo de empleado</th>
+                <th>Contraseña</th>
+                <th>Codigo de empleado</th>
+                <th>Nombre</th>
+                <th>Puerto</th>
+                <th>País</th>
+                <th></th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var usuario in usuarios)
+            {
+                <tr>
+                    <!--<td>@usuario.Id</td>-->
+                    <td>@usuario.Tipo</td>
+                    <td>@usuario.Contraseña</td>
+                    <td>@usuario.Codigo</td>
+                    <td>@usuario.Nombre</td>
+                    <td>@usuario.Nombre_Puerto</td>
+                    <td>@usuario.Pais</td>
+                    <td>
+                        <a class="btn btn-secondary text-dark" href="PersonalEditar?Id=@usuario.Id" role="button">
+                            <i class="oi oi-pencil text-dark"></i>
+                        </a>
+                    </td>
+                    <td>
+                        <button class="btn btn-secondary" @onclick="() => borrar(usuario.Id)" role="button">
+                            <i class="oi oi-trash text-dark"></i>
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
 
 @code
 {
@@ -81,7 +85,7 @@
             if (Texto != "")
             {
                 q = q + " where tipo_empleado ='" + Texto + "' ";
-                //q = q + "or contraseña ='" + Texto + "' ";
+                q = q + "or contraseña ='" + Texto + "' ";
                 q = q + "or codigo_empleado ='" + Texto + "' ";
                 q = q + "or nombre ='" + Texto + "' ";
                 q = q + "or puerto ='" + Texto + "' ";
@@ -101,6 +105,19 @@
                 usuario.Puerto = reader["Puerto"].ToString();
                 usuario.Pais = reader["Pais"].ToString();
 
+                //para que aparezca el nombre del puerto y no el código
+                using var connectionPO = new MySqlConnection(connString);
+                {
+                    connectionPO.Open();
+
+                    string qPO = "SELECT * FROM puertos where codigo = '" + usuario.Puerto + "'";
+                    using var commandPO = new MySqlCommand(qPO, connectionPO);
+                    using var readerPO = commandPO.ExecuteReader(); //devuelve un objeto para poder hacer consultas, en este caso q
+                    if (readerPO.Read())
+                    {
+                        usuario.Nombre_Puerto = readerPO["nombre"].ToString();
+                    }
+                }
                 usuarios.Add(usuario);
             }
         }

@@ -119,7 +119,7 @@ using Clases;
         }
         #pragma warning restore 1998
 #nullable restore
-#line 67 "C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\Pages\PersonalEditar.razor"
+#line 76 "C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\Pages\PersonalEditar.razor"
  
     int Id = 0;
     Usuarios usuario = new Usuarios();
@@ -127,6 +127,39 @@ using Clases;
     List<Tipo_empleado> Tipo_empleados = new List<Tipo_empleado>();
     List<Pais> Paises = new List<Pais>();
     List<Puerto> Puertos = new List<Puerto>();
+
+    void LlenaPuertos(String Pais)
+    {
+        //puertos
+        Puertos.Clear();
+        String connString = config.GetConnectionString("MySqlNaviera");
+        using var connectionPuertos = new MySqlConnection(connString);
+        {
+            //tipo de empleado
+            connectionPuertos.Open();
+
+            using var commandPuertos = new MySqlCommand("SELECT * FROM puertos where pais = '" + Pais + "'", connectionPuertos);
+            {
+                using var readerPuertos = commandPuertos.ExecuteReader();
+                {
+                    while (readerPuertos.Read())
+                    {
+                        var puerto = new Puerto();
+                        puerto.Codigo = readerPuertos["codigo"].ToString();
+                        puerto.Nombre = readerPuertos["nombre"].ToString();
+                        Puertos.Add(puerto);
+                    }
+                }
+            }
+        }
+    }
+    void Llena_Puertos_Evento(ChangeEventArgs e)
+    {
+        // Recibe como parametro el dato que cambio en e.value
+        String Pais = e.Value.ToString();
+        usuario.Puerto = "";
+        LlenaPuertos(Pais);
+    }
 
     void Llena_Combos() //no regresa ningún resultado void (lista de todos lo países)
     {
@@ -159,21 +192,6 @@ using Clases;
                         pais.Codigo = reader2["codigo"].ToString();
                         pais.Nombre = reader2["nombre"].ToString();
                         Paises.Add(pais);
-                    }
-                }
-            }
-
-            //puertos
-            using var command3 = new MySqlCommand("SELECT * FROM puertos;", connection);
-            {
-                using var reader3 = command3.ExecuteReader();
-                {
-                    while (reader3.Read())
-                    {
-                        var puerto = new Puerto();
-                        puerto.Codigo = reader3["codigo"].ToString();
-                        puerto.Nombre = reader3["nombre"].ToString();
-                        Puertos.Add(puerto);
                     }
                 }
             }
@@ -242,6 +260,7 @@ using Clases;
                 usuario.Nombre = reader["nombre"].ToString();
                 usuario.Puerto = reader["puerto"].ToString();
                 usuario.Pais = reader["pais"].ToString();
+                LlenaPuertos(usuario.Pais);
             }
         }
     }
@@ -251,6 +270,7 @@ using Clases;
 #nullable disable
         [global::Microsoft.AspNetCore.Components.InjectAttribute] private NavigationManager NavManager { get; set; }
         [global::Microsoft.AspNetCore.Components.InjectAttribute] private Microsoft.Extensions.Configuration.IConfiguration config { get; set; }
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private LoginState loginState { get; set; }
     }
 }
 #pragma warning restore 1591
