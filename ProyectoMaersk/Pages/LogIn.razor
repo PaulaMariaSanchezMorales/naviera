@@ -1,4 +1,4 @@
-﻿@layout BlankLayout
+﻿@layout BlankLayout 
 @using Microsoft.Extensions.Configuration
 @using MySqlConnector
 @using Clases
@@ -51,14 +51,15 @@
 
 @code
 {
+    //guardar los datos de la clase DataLogin
     private DataLogIn login = new DataLogIn();
 
     public void ingresar()
     {
         String connString = config.GetConnectionString("MySqlNaviera");
 
-        loginState.SetLogin(true, login.Usuario);
-        lee_usuarios(login.Usuario, login.Contraseña);
+        loginState.SetLogin(true, login.Usuario); //función en la que se asignan los valores
+        lee_usuarios(login.Usuario, login.Contraseña); //comprueba la contraseña y usuario ingresados
         if (login.Error == "")
         {
             if (loginState.EsAdministrador)

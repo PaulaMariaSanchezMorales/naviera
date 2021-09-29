@@ -5,6 +5,8 @@
 @layout BlankLayout
 @page "/ListaReservas"
 
+<!--inpresión de reservas generales-->
+
 <body onload="window.print()">
     <!--función de javascript para realizar la impresión-->
 
@@ -84,15 +86,16 @@
 
 @code
 {
+    //nueva lista con los datos de la clase Reservas
     private List<Reserva> reservas = new List<Reserva>();
 
     public void lee_reservas()
     {
-        reservas.Clear();
-        String connString = config.GetConnectionString("MySqlNaviera");
+        reservas.Clear(); //limpiando el campo de reservas para que los valores no se vayan acumulando
+        String connString = config.GetConnectionString("MySqlNaviera"); //variable de conexión a la base
         using var connection = new MySqlConnection(connString);
         {
-            connection.Open();
+            connection.Open(); //abriendo la conección a la base de datos, si xampp no está abierto no funciona 
 
             string q = "SELECT * FROM reserva_contenedor"; //selección de lo que q vaya a devolver
 

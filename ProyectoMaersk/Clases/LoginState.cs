@@ -10,9 +10,9 @@ namespace ProyectoMaersk.Clases
         public bool IsLoggedIn { get; set; }
         public string codigo { get; set; }
         public string nombre { get; set; }
-        public bool EsAdministrador { get; set; }
+        public bool EsAdministrador { get; set; } //verdadero o falso para verificar que sea admin
 
-        public event Action OnChange;
+        public event Action OnChange; //para poder levantar eventos
 
         public void SetLogin(bool login, string user)
         {

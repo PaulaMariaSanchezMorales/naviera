@@ -70,16 +70,17 @@
 
 @code
 {
+    //lista de datos de la clase Usuarios
     private List<Usuarios> usuarios = new List<Usuarios>();
     Busqueda busqueda = new Busqueda();
 
     public void lee_usuarios(String Texto)
     {
         usuarios.Clear();
-        String connString = config.GetConnectionString("MySqlNaviera");
+        String connString = config.GetConnectionString("MySqlNaviera"); //variable de conexíón a la base
         using var connection = new MySqlConnection(connString);
         {
-            connection.Open();
+            connection.Open(); //abriendo la conección a la base de datos, si xampp no está abierto no funciona
 
             string q = "SELECT * FROM usuarios";
             if (Texto != "")

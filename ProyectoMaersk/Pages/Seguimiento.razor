@@ -32,9 +32,10 @@
         @if (reserva.Puerto_Origen != "" && reserva.Puerto_Destino != "")
         {
             <iframe class="custom-shadow" id="map-canvas" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" style="width:100%; height:800px;"
-                    src="Prueba.html?loc1=@localizacion_origen&loc2=@localizacion_destino">
+                    src="Prueba.html?loc1=@localizacion_origen&loc2=@localizacion_destino"> <!--campo html en el que se crea el mapa, con bing maps portal-->
                 <!--pasando parámetros a html-->
             </iframe>
+            <!--iframe para meter un html dentro de otro-->
         }
         else
         {
@@ -69,8 +70,6 @@
         String connString = config.GetConnectionString("MySqlNaviera");
         using var connection = new MySqlConnection(connString);
         {
-
-
             string q = "";
 
             reserva.Puerto_Origen = "";

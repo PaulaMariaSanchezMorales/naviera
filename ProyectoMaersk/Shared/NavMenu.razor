@@ -30,7 +30,9 @@
                     </div>
                 </div>
             </li>
-            @if (loginState.EsAdministrador) <!--si el usuario es administrador si aparece en el manú la parte de personal, de lo contrario no-->
+            <!--pantallas que salen en el menú-->
+            <!--si el usuario es administrador si aparece en el manú la parte de personal, de lo contrario no-->
+            @if (loginState.EsAdministrador)
             {
                 <li class="nav-item px-3">
                     <NavLink class="nav-link" href="personal">
@@ -75,6 +77,7 @@
 
     public void logout()
     {
+        //el nombre y el código se convierten en vacío para no tener usuario ingresado y IsLoggedIn se vuelve farso y vuelve a la parte de afuera de imágen.
         loginState.nombre = "";
         loginState.codigo = "";
         loginState.IsLoggedIn = false;

@@ -1,9 +1,9 @@
 ﻿@using Microsoft.Extensions.Configuration
 @using MySqlConnector
-@using Clases
-@inject LoginState loginState
+@using Clases <!--utilizar todas las clases creadas-->
+@inject LoginState loginState 
 @inject Microsoft.Extensions.Configuration.IConfiguration config
-@inject NavigationManager NavManager
+@inject NavigationManager NavManager 
 @page "/"
 
 @if (loginState.IsLoggedIn)
@@ -21,6 +21,7 @@
             <EditForm Model="@busqueda" class="form-inline">
                 <div class="form-group">
                     <button class="btn btn-secondary" @onclick="() => buscar(busqueda.Texto)" role="button">
+                        <!--que realice la búsqueda respecto al texto que se ingresó-->
                         <i class="oi oi-magnifying-glass text-dark"></i>
                     </button>
                     <InputText id="textobuscar" @bind-Value="busqueda.Texto" class="form-control" placeholder="Buscar" />
@@ -85,6 +86,7 @@
                                 <a href="ListaReservasIndividual?Id=@reserva.Id" target="_blank" class="btn btn-secondary text-dark" role="button">
                                     <!--link pintado como botón para que dirija hacia ListaReservas-->
                                     <!--?Id enviando parámetro de id a ListaReservasIndividual-->
+                                    <!--target para que lo muestre en cierta página, en este caso en una nueva pestaña-->
                                     <i class="oi oi-data-transfer-download text-dark"></i>
                                 </a>
                             </div>
@@ -105,6 +107,7 @@
                     <!--botón para edición-->
                     <td>
                         <a class="btn btn-secondary text-dark" href="ReservasEditar?Id=@reserva.Id" role="button">
+                            <!--?Id como parámetro a ReservasEditar-->
                             <i class="oi oi-pencil text-dark"></i>
                         </a>
                     </td>
@@ -129,7 +132,7 @@
     </div>
 }
 else
-{ 
+{
     // No esta Loggeado
     <div class="row">
         <div class="col-12 text-center">
@@ -142,19 +145,21 @@ else
         </div>
     </div>
 }
-   
+
 @code
 {
+    //vectores para guardar los datos de la clase reservas
     private List<Reserva> reservas = new List<Reserva>();
+
     Busqueda busqueda = new Busqueda();
 
     public void lee_reservas(string Texto)
     {
         reservas.Clear();
         String connString = config.GetConnectionString("MySqlNaviera");
-        using var connection = new MySqlConnection(connString);
+        using var connection = new MySqlConnection(connString); //variable de conexíón a la base
         {
-            connection.Open();
+            connection.Open(); //abriendo la conección a la base de datos, si xampp no está abierto no funciona
 
             string q = "SELECT * FROM reserva_contenedor"; //selección de lo que q vaya a devolver
             if (Texto != "")
@@ -177,7 +182,7 @@ else
             }
 
             using var command = new MySqlCommand(q, connection);
-            using var reader = command.ExecuteReader(); //devuelve un objeto para poder hacer consultas, en este caso q
+            using var reader = command.ExecuteReader(); //devuelve un objeto para poder hacer consultas, en este caso q. Comienza a leer la data
             while (reader.Read())
             {
                 var reserva = new Reserva();
@@ -201,9 +206,9 @@ else
                 reserva.Tipo_Contenedor = reader["Tipo_Contenedor"].ToString();
 
                 //para que aparezca el nombre del puerto y no el código
-                using var connectionPO = new MySqlConnection(connString);
+                using var connectionPO = new MySqlConnection(connString); //variable de conexíón a la base
                 {
-                    connectionPO.Open();
+                    connectionPO.Open(); //abriendo la conección a la base de datos, si xampp no está abierto no funciona
 
                     string qPO = "SELECT * FROM puertos where codigo = '" + reserva.Puerto_Origen + "'";
                     using var commandPO = new MySqlCommand(qPO, connectionPO);
@@ -214,9 +219,9 @@ else
                     }
                 }
 
-                using var connectionPD = new MySqlConnection(connString);
+                using var connectionPD = new MySqlConnection(connString); //variable de conexión a la base
                 {
-                    connectionPD.Open();
+                    connectionPD.Open(); //abriendo la conexión a la base de datos, si xampp no está abierto no funciona
 
                     string qPD = "SELECT * FROM puertos where codigo = '" + reserva.Puerto_Destino + "'";
                     using var commandPD = new MySqlCommand(qPD, connectionPD);
@@ -235,12 +240,13 @@ else
     {
         lee_reservas("");
     }
+
     //funciones
     private void borrar(int id)
     {
         String connString = config.GetConnectionString("MySqlNaviera");
         {
-            using var connection = new MySqlConnection(connString);
+            using var connection = new MySqlConnection(connString); //variable de conexíón a la base
             {
                 connection.Open(); //abriendo la conección a la base de datos, si xampp no está abierto no funciona
                 String q = "Delete from reserva_contenedor where id = '" + id + "'";

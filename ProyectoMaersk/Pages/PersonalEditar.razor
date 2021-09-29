@@ -3,7 +3,7 @@
 @using MySqlConnector
 @using Clases
 @inject LoginState loginState //para poder usar el loginState
-@inject Microsoft.Extensions.Configuration.IConfiguration config
+@inject Microsoft.Extensions.Configuration.IConfiguration config    
 @inject NavigationManager NavManager
 
 @page "/PersonalEditar"
@@ -16,7 +16,7 @@
 
     <div class="container">
         <EditForm Model=@usuario OnValidSubmit="@grabar">
-            <DataAnnotationsValidator />
+            <DataAnnotationsValidator /> <!--acá es donde se valida que los datos sean correctos, muestra los cuadritos en rojo, valida los espacios vacíos y datos incorrectos con respecto al tipo que se le asignó en la base de datos-->
             <div class="form-group">
                 <label for="tipoempleado">Tipo de empleado</label>
                 <InputSelect @bind-Value="usuario.Tipo" class="form-control" id="tipoempleado">
@@ -81,15 +81,16 @@
     List<Pais> Paises = new List<Pais>();
     List<Puerto> Puertos = new List<Puerto>();
 
+    //para que el puerto que elija dependa del país que ya se eligió
     void LlenaPuertos(String Pais)
     {
         //puertos
         Puertos.Clear();
-        String connString = config.GetConnectionString("MySqlNaviera");
+        String connString = config.GetConnectionString("MySqlNaviera"); //variable de conexión a la base
         using var connectionPuertos = new MySqlConnection(connString);
         {
             //tipo de empleado
-            connectionPuertos.Open();
+            connectionPuertos.Open(); //apertura de la base
 
             using var commandPuertos = new MySqlCommand("SELECT * FROM puertos where pais = '" + Pais + "'", connectionPuertos);
             {
@@ -183,6 +184,7 @@
         NavManager.NavigateTo("/Personal");
     }
 
+    //verificación de todos los datos ingresados por el usuario que serán grabados en la base de datos
     protected override void OnInitialized()
     {
         var uri = NavManager.ToAbsoluteUri(NavManager.Uri);

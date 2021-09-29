@@ -12,7 +12,7 @@ namespace ProyectoMaersk.Clases
         public int Id { get; set; }
         public String Codigo { get; set; }
 
-        [Required]
+        [Required] //datos obligatorios
         public String Empresa { get; set; }
 
         [Required]

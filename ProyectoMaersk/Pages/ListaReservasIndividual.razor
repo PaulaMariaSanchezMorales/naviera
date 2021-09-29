@@ -117,7 +117,7 @@
 
     List<Tipo_contenedor> Tipo_Contenedores = new List<Tipo_contenedor>();
 
-
+    //inicializando conexión a la base de datos validando el ID, para realizar el registro dependiendo de él
     protected override void OnInitialized()
     {
         var uri = NavManager.ToAbsoluteUri(NavManager.Uri);
@@ -131,9 +131,9 @@
         }
 
         String connString = config.GetConnectionString("MySqlNaviera");
-        using var connection = new MySqlConnection(connString);
+        using var connection = new MySqlConnection(connString); //variable de conexión a la base
         {
-            connection.Open();
+            connection.Open(); //abriendo la conexión a la base de datos, si xampp no está abierto no funciona
             String q = "SELECT * FROM reserva_contenedor where id = '" + Id + "';";
 
             using var command = new MySqlCommand(q, connection);

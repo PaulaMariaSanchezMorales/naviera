@@ -8,7 +8,8 @@
 
 @page "/Facturas"
 
-<body onload="window.print()">
+<body onload="window.print()"> <!--función de javascript para las impresiones-->
+    <!--diseño de la factura-->
     <div class="row">
         <div class="col-sm-4 mb-3">
             <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Maersk_Group_Logo.svg/1280px-Maersk_Group_Logo.svg.png" class="img-fluid" width="500" height="400">
@@ -26,7 +27,7 @@
         <div class="d-flex p-2 bd-highlight bg-secondary">Facturación</div>
         <br />
     </h1>
-
+    <!--datos de la factura-->
     <div class="container">
         <div class="row">
             <div class="col-sm-4 mb-3">
@@ -167,23 +168,24 @@
 
 @code
 {
-        int Id = 0;
-        Reserva reserva = new Reserva();
+    //generación de las listas que se van a leer
+    int Id = 0;
+    Reserva reserva = new Reserva();
 
-        List<Pais> Paises_Origen = new List<Pais>(); //listado de los países existentes
-        List<Pais> Paises_Destino = new List<Pais>();
+    List<Pais> Paises_Origen = new List<Pais>(); //listado de los países existentes
+    List<Pais> Paises_Destino = new List<Pais>();
 
-        List<Puerto> Puertos_Origen = new List<Puerto>();
-        List<Puerto> Puertos_Destino = new List<Puerto>();
+    List<Puerto> Puertos_Origen = new List<Puerto>();
+    List<Puerto> Puertos_Destino = new List<Puerto>();
 
-        List<Tipo_carga> Tipo_Carga = new List<Tipo_carga>();
+    List<Tipo_carga> Tipo_Carga = new List<Tipo_carga>();
 
-        List<Valor> Valores = new List<Valor>();
+    List<Valor> Valores = new List<Valor>();
 
-        List<Tipo_contenedor> Tipo_Contenedores = new List<Tipo_contenedor>();
+    List<Tipo_contenedor> Tipo_Contenedores = new List<Tipo_contenedor>();
 
-
-    protected override void OnInitialized()
+    //se inicializa la base de datos
+    protected override void OnInitialized() //inicializando la lectura de los datos
     {
         var uri = NavManager.ToAbsoluteUri(NavManager.Uri);
         if (QueryHelpers.ParseQuery(uri.Query).TryGetValue("Id", out var param))
@@ -198,8 +200,9 @@
         String connString = config.GetConnectionString("MySqlNaviera");
         using var connection = new MySqlConnection(connString);
         {
+            //abrir conexión a la base de datos
             connection.Open();
-            String q = "SELECT * FROM reserva_contenedor where id = '" + Id + "';";
+            String q = "SELECT * FROM reserva_contenedor where id = '" + Id + "';"; //se busca por ID, el cual es único
 
             using var command = new MySqlCommand(q, connection);
             using var reader = command.ExecuteReader();
@@ -223,8 +226,9 @@
                 reserva.Peso = reader["Peso_carga"].ToString();
                 reserva.Valor = reader["Valor_carga"].ToString();
                 reserva.Tipo_Contenedor = reader["Tipo_Contenedor"].ToString();
+                //convertir el valor de la reserva a double para poderlo sumar con otro valor
                 double valordelareserva = 0;
-                double.TryParse(reserva.Valor.Substring(2,7), out valordelareserva);
+                double.TryParse(reserva.Valor.Substring(2,7), out valordelareserva); //utilizar datos desde la posición 2 hasta la 7, y que salga como valordelareserva
                 double totalfactura = valordelareserva + 950.00;
                 reserva.Total_Factura = totalfactura.ToString();
             }
