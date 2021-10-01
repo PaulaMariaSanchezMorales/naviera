@@ -1,7 +1,15 @@
 ﻿@using ProyectoMaersk.Clases <!--crear todas las clases ya creadas-->
-@inject Microsoft.Extensions.Configuration.IConfiguration config
-@inject LoginState loginState
+@using Microsoft.AspNetCore.Authentication;
+@using Microsoft.Extensions.Configuration
+@using System.Security.Claims;
+@using Microsoft.AspNetCore.Authentication.Cookies;
+@using Microsoft.AspNetCore.Http;
+@using MySqlConnector
+@using Microsoft.AspNetCore.Identity
 @inject NavigationManager NavManager
+@inject Microsoft.Extensions.Configuration.IConfiguration config
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject SignInManager<UsuarioIdentity> SignInManager
 
 <div class="navbar navbar-dark" style="background-color:#778DA9">
     <a class="navbar-brand" href="">
@@ -12,55 +20,48 @@
     </button>
 </div>
 
-@if (loginState.IsLoggedIn)
-{
-    <div class="@NavMenuCssClass" style="background-color:#778DA9" @onclick="ToggleNavMenu">
-        <ul class="nav flex-column">
-            <li class="nav-item px-3 text-white">
-                <div class="row text-center">
-                    <div class="col-1">
-                        <span class="oi oi-person" aria-hidden="true"></span>
+<AuthorizeView>
+    <Authorized>
+        <div class="@NavMenuCssClass" style="background-color:#778DA9" @onclick="ToggleNavMenu">
+            <ul class="nav flex-column">
+                <li class="nav-item px-3 text-white">
+                    <div class="row text-center">
+                        <div class="col-1">
+                            <span class="oi oi-person" aria-hidden="true"></span>
+                        </div>
+                        <div class="col-8">
+                            Codigo: @usuario.Codigo
+                            <br />
+                            @usuario.Nombre
+                        </div>
+                        <div class="col-1">
+                        </div>
                     </div>
-                    <div class="col-8">
-                        Codigo: @loginState.codigo
-                        <br />
-                        @loginState.nombre
-                    </div>
-                    <div class="col-1">
-                    </div>
-                </div>
-            </li>
-            <!--pantallas que salen en el menú-->
-            <!--si el usuario es administrador si aparece en el manú la parte de personal, de lo contrario no-->
-            @if (loginState.EsAdministrador)
-            {
+                </li>
+                <!--pantallas que salen en el menú-->
+                <!--si el usuario es administrador si aparece en el manú la parte de personal, de lo contrario no-->
+                @if (usuario.EsAdministrador)
+                {
+                    <li class="nav-item px-3">
+                        <NavLink class="nav-link" href="personal">
+                            <span class="oi oi-people" aria-hidden="true"></span> Personal
+                        </NavLink>
+                    </li>
+                }
                 <li class="nav-item px-3">
-                    <NavLink class="nav-link" href="personal">
-                        <span class="oi oi-people" aria-hidden="true"></span> Personal
+                    <NavLink class="nav-link" href="/">
+                        <span class="oi oi-spreadsheet" aria-hidden="true"></span> Reserva y Reportes
                     </NavLink>
                 </li>
-            }
-            <li class="nav-item px-3">
-                <NavLink class="nav-link" href="/">
-                    <span class="oi oi-spreadsheet" aria-hidden="true"></span> Reserva y Reportes
-                </NavLink>
-            </li>
-            <li class="nav-item px-3">
-                <NavLink class="nav-link" href="seguimiento">
-                    <span class="oi oi-map" aria-hidden="true"></span> Seguimiento
-                </NavLink>
-            </li>
-            <li class="nav-item px-3">
-
-                <a style="padding-left:15px;" @onclick="logout">
-                    <i class="oi oi-account-logout"></i>
-                    Log out
-                </a>
-
-            </li>
-        </ul>
-    </div>
-}
+                <li class="nav-item px-3">
+                    <NavLink class="nav-link" href="seguimiento">
+                        <span class="oi oi-map" aria-hidden="true"></span> Seguimiento
+                    </NavLink>
+                </li>
+            </ul>
+        </div>
+    </Authorized>
+</AuthorizeView>
 
 @code {
 
@@ -68,19 +69,22 @@
     private bool collapseNavMenu = true;
 
     private string NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+    public LeeUsuario usuario = new LeeUsuario();
 
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        String connString = config.GetConnectionString("MySqlNaviera");
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        if (user.Identity.IsAuthenticated)
+        {
+            usuario.Leer(user.Identity.Name, connString);
+        }
+    }
 
     private void ToggleNavMenu()
     {
         collapseNavMenu = !collapseNavMenu;
-    }
-
-    public void logout()
-    {
-        //el nombre y el código se convierten en vacío para no tener usuario ingresado y IsLoggedIn se vuelve farso y vuelve a la parte de afuera de imágen.
-        loginState.nombre = "";
-        loginState.codigo = "";
-        loginState.IsLoggedIn = false;
-        NavManager.NavigateTo("/", true);
     }
 }

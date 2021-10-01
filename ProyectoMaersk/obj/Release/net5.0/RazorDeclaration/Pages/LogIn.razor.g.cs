@@ -13,91 +13,126 @@ namespace ProyectoMaersk.Pages
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Components;
 #nullable restore
-#line 1 "C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\_Imports.razor"
+#line 1 "C:\Users\osanc\source\repos\naviera\ProyectoMaersk\_Imports.razor"
 using System.Net.Http;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 2 "C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\_Imports.razor"
+#line 2 "C:\Users\osanc\source\repos\naviera\ProyectoMaersk\_Imports.razor"
 using Microsoft.AspNetCore.Authorization;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 3 "C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\_Imports.razor"
+#line 3 "C:\Users\osanc\source\repos\naviera\ProyectoMaersk\_Imports.razor"
 using Microsoft.AspNetCore.Components.Authorization;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 4 "C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\_Imports.razor"
+#line 4 "C:\Users\osanc\source\repos\naviera\ProyectoMaersk\_Imports.razor"
 using Microsoft.AspNetCore.Components.Forms;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 5 "C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\_Imports.razor"
+#line 5 "C:\Users\osanc\source\repos\naviera\ProyectoMaersk\_Imports.razor"
 using Microsoft.AspNetCore.Components.Routing;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 6 "C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\_Imports.razor"
+#line 6 "C:\Users\osanc\source\repos\naviera\ProyectoMaersk\_Imports.razor"
 using Microsoft.AspNetCore.Components.Web;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 7 "C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\_Imports.razor"
+#line 7 "C:\Users\osanc\source\repos\naviera\ProyectoMaersk\_Imports.razor"
 using Microsoft.AspNetCore.Components.Web.Virtualization;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 8 "C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\_Imports.razor"
+#line 8 "C:\Users\osanc\source\repos\naviera\ProyectoMaersk\_Imports.razor"
 using Microsoft.JSInterop;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 9 "C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\_Imports.razor"
+#line 9 "C:\Users\osanc\source\repos\naviera\ProyectoMaersk\_Imports.razor"
 using ProyectoMaersk;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 10 "C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\_Imports.razor"
+#line 10 "C:\Users\osanc\source\repos\naviera\ProyectoMaersk\_Imports.razor"
 using ProyectoMaersk.Shared;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 2 "C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\Pages\LogIn.razor"
+#line 2 "C:\Users\osanc\source\repos\naviera\ProyectoMaersk\Pages\LogIn.razor"
+using Microsoft.AspNetCore.Identity;
+
+#line default
+#line hidden
+#nullable disable
+#nullable restore
+#line 3 "C:\Users\osanc\source\repos\naviera\ProyectoMaersk\Pages\LogIn.razor"
+using Microsoft.AspNetCore.Authentication;
+
+#line default
+#line hidden
+#nullable disable
+#nullable restore
+#line 4 "C:\Users\osanc\source\repos\naviera\ProyectoMaersk\Pages\LogIn.razor"
 using Microsoft.Extensions.Configuration;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 3 "C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\Pages\LogIn.razor"
+#line 5 "C:\Users\osanc\source\repos\naviera\ProyectoMaersk\Pages\LogIn.razor"
+using System.Security.Claims;
+
+#line default
+#line hidden
+#nullable disable
+#nullable restore
+#line 6 "C:\Users\osanc\source\repos\naviera\ProyectoMaersk\Pages\LogIn.razor"
+using Microsoft.AspNetCore.Authentication.Cookies;
+
+#line default
+#line hidden
+#nullable disable
+#nullable restore
+#line 7 "C:\Users\osanc\source\repos\naviera\ProyectoMaersk\Pages\LogIn.razor"
+using Microsoft.AspNetCore.Http;
+
+#line default
+#line hidden
+#nullable disable
+#nullable restore
+#line 8 "C:\Users\osanc\source\repos\naviera\ProyectoMaersk\Pages\LogIn.razor"
 using MySqlConnector;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 4 "C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\Pages\LogIn.razor"
+#line 9 "C:\Users\osanc\source\repos\naviera\ProyectoMaersk\Pages\LogIn.razor"
 using Clases;
 
 #line default
@@ -113,37 +148,64 @@ using Clases;
         }
         #pragma warning restore 1998
 #nullable restore
-#line 53 "C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\Pages\LogIn.razor"
+#line 62 "C:\Users\osanc\source\repos\naviera\ProyectoMaersk\Pages\LogIn.razor"
  
     //guardar los datos de la clase DataLogin
     private DataLogIn login = new DataLogIn();
 
-    public void ingresar()
+    public async Task ingresar()
     {
+        LoginState user = new LoginState();
         String connString = config.GetConnectionString("MySqlNaviera");
-
-        loginState.SetLogin(true, login.Usuario); //función en la que se asignan los valores
-        lee_usuarios(login.Usuario, login.Contraseña); //comprueba la contraseña y usuario ingresados
-        if (login.Error == "")
+        // LoginState result = lee_usuarios(login.Usuario, login.Contraseña); //comprueba la contraseña y usuario ingresados
+        var result = new LoginState();
+        if (login.Usuario == "abc")
         {
-            if (loginState.EsAdministrador)
-            {
+            result.codigo = "123";
+            result.nombre = "Marito";
+            result.esAdministrador = true;
+            result.error = "";
+        }
+        else
+        {
+            result.error = "Nel Pastel";
+        }
+        if (result.error == "")
+        {
+
+            ClaimsPrincipal principal = await SignInManager.CreateUserPrincipalAsync(user);
+            SignInManager.Context.User = principal;
+            HostAuthentication!.SetAuthenticationState(Task.FromResult(new AuthenticationState(principal)));
+            // If you don't need doing anything without moving to next page, you can remove this.
+            AuthenticationState authState = await AuthenticationStateProvider!.GetAuthenticationStateAsync();
+
+            //var claims = new List<Claim>();
+            //claims.Add(new Claim(ClaimTypes.Name, result.codigo));
+            //claims.Add(new Claim("nombre", result.nombre));
+            //if (result.esAdministrador)
+            //    claims.Add(new Claim(ClaimTypes.Role, "Administrator"));
+            //else
+            //    claims.Add(new Claim(ClaimTypes.Role, "Usuario"));
+
+            // var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+            // var authProperties = new AuthenticationProperties();
+            // await SignInManager.SignInAsync(result, authProperties);
+
+            if (result.esAdministrador)
                 NavManager.NavigateTo("/Personal");
-            }
             else
-            {
                 NavManager.NavigateTo("/");
-            }
         }
     }
 
-    public void lee_usuarios(String usuario, String contraseña)
+    public LoginState lee_usuarios(String usuario, String contraseña)
     {
-
+        var loginState = new LoginState();
+        loginState.codigo = login.Usuario;
         loginState.nombre = "";
         loginState.codigo = "";
-        loginState.IsLoggedIn = false;
-        loginState.EsAdministrador = false;
+        loginState.isLoggedIn = false;
+        loginState.esAdministrador = false;
         login.Error = "";
 
         String connString = config.GetConnectionString("MySqlNaviera");
@@ -160,7 +222,7 @@ using Clases;
             else
             {
                 q = "SELECT * FROM usuarios";
-                q = q + " where codigo_empleado ='" + login.Usuario + "' ";
+                q = q + " where codigo ='" + login.Usuario + "' ";
                 q = q + "and contraseña ='" + login.Contraseña + "'";
 
                 using var command = new MySqlCommand(q, connection);
@@ -168,15 +230,15 @@ using Clases;
                 if (reader.Read())
                 {
                     loginState.nombre = reader["Nombre"].ToString();
-                    loginState.codigo = reader["Codigo_empleado"].ToString();
-                    loginState.IsLoggedIn = true;
+                    loginState.codigo = reader["Codigo"].ToString();
+                    loginState.isLoggedIn = true;
                     if (reader["tipo_empleado"].ToString() == "Administrador")
                     {
-                        loginState.EsAdministrador = true;
+                        loginState.esAdministrador = true;
                     }
                     else
                     {
-                        loginState.EsAdministrador = false;
+                        loginState.esAdministrador = false;
                     }
                 }
                 else
@@ -186,14 +248,18 @@ using Clases;
             }
 
         }
+        return loginState;
     }
 
 #line default
 #line hidden
 #nullable disable
-        [global::Microsoft.AspNetCore.Components.InjectAttribute] private NavigationManager NavManager { get; set; }
         [global::Microsoft.AspNetCore.Components.InjectAttribute] private Microsoft.Extensions.Configuration.IConfiguration config { get; set; }
-        [global::Microsoft.AspNetCore.Components.InjectAttribute] private LoginState loginState { get; set; }
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private AuthenticationStateProvider AuthenticationStateProvider { get; set; }
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private IHostEnvironmentAuthenticationStateProvider HostAuthentication { get; set; }
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private SignInManager<LoginState> SignInManager { get; set; }
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private NavigationManager NavManager { get; set; }
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private IJSRuntime JSRuntime { get; set; }
     }
 }
 #pragma warning restore 1591

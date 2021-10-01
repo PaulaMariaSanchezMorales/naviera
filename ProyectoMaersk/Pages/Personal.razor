@@ -1,77 +1,81 @@
-﻿@using Microsoft.Extensions.Configuration
+﻿@using Microsoft.AspNetCore.Authentication;
+@using Microsoft.Extensions.Configuration
+@using System.Security.Claims;
+@using Microsoft.AspNetCore.Authentication.Cookies;
+@using Microsoft.AspNetCore.Http;
 @using MySqlConnector
 @using Clases
-@inject LoginState loginState
 @inject Microsoft.Extensions.Configuration.IConfiguration config
 @inject NavigationManager NavManager
 @page "/Personal"
 
-@if (loginState.EsAdministrador)
-{
-    <h1>Personal</h1>
+<AuthorizeView>
+    <Authorized Context="Auth">
+        <h1>Personal</h1>
 
-    <h4>Listado de personal</h4>
+        <h4>Listado de personal</h4>
 
-    <div class="row">
-        <div class="col-10 mb-3">
-            <a class="btn btn-secondary text-dark" href="PersonalEditar" role="button">Agregar</a>
-        </div>
-        <div class="col-sm-2 mb-3">
-            <EditForm Model="@busqueda" class="form-inline">
-                <div class="form-group">
-                    <button class="btn btn-secondary" @onclick="() => buscar(busqueda.Texto)" role="button">
-                        <i class="oi oi-magnifying-glass text-dark"></i>
-                    </button>
-                    <InputText id="textobuscar" @bind-Value="busqueda.Texto" class="form-control" placeholder="Buscar" />
-                </div>
-            </EditForm>
-        </div>
-    </div>
-    <table class="table table-sm">
-        <thead>
-            <tr class="bg-primary">
-                <!--<th>ID</th>-->
-                <th>Tipo de empleado</th>
-                <th>Contraseña</th>
-                <th>Codigo de empleado</th>
-                <th>Nombre</th>
-                <th>Puerto</th>
-                <th>País</th>
-                <th></th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var usuario in usuarios)
-            {
-                <tr>
-                    <!--<td>@usuario.Id</td>-->
-                    <td>@usuario.Tipo</td>
-                    <td>@usuario.Contraseña</td>
-                    <td>@usuario.Codigo</td>
-                    <td>@usuario.Nombre</td>
-                    <td>@usuario.Nombre_Puerto</td>
-                    <td>@usuario.Pais</td>
-                    <td>
-                        <a class="btn btn-secondary text-dark" href="PersonalEditar?Id=@usuario.Id" role="button">
-                            <i class="oi oi-pencil text-dark"></i>
-                        </a>
-                    </td>
-                    <td>
-                        <button class="btn btn-secondary" @onclick="() => borrar(usuario.Id)" role="button">
-                            <i class="oi oi-trash text-dark"></i>
+        <div class="row">
+            <div class="col-10 mb-3">
+                <a class="btn btn-secondary text-dark" href="PersonalEditar" role="button">Agregar</a>
+            </div>
+            <div class="col-sm-2 mb-3">
+                <EditForm Model="@busqueda" class="form-inline">
+                    <div class="form-group">
+                        <button class="btn btn-secondary" @onclick="() => buscar(busqueda.Texto)" role="button">
+                            <i class="oi oi-magnifying-glass text-dark"></i>
                         </button>
-                    </td>
+                        <InputText id="textobuscar" @bind-Value="busqueda.Texto" class="form-control" placeholder="Buscar" />
+                    </div>
+                </EditForm>
+            </div>
+        </div>
+        <table class="table table-sm">
+            <thead>
+                <tr class="bg-primary">
+                    <!--<th>ID</th>-->
+                    <th>Tipo de empleado</th>
+                    <th>Contraseña</th>
+                    <th>Codigo de empleado</th>
+                    <th>Nombre</th>
+                    <th>Puerto</th>
+                    <th>País</th>
+                    <th></th>
+                    <th></th>
                 </tr>
-            }
-        </tbody>
-    </table>
-}
+            </thead>
+            <tbody>
+                @foreach (var usuario in usuarios)
+                {
+                    <tr>
+                        <!--<td>@usuario.Id</td>-->
+                        <td>@usuario.Tipo_Empleado</td>
+                        <td>@usuario.Contraseña</td>
+                        <td>@usuario.Codigo</td>
+                        <td>@usuario.Nombre</td>
+                        <td>@usuario.Nombre_Puerto</td>
+                        <td>@usuario.Pais</td>
+                        <td>
+                            <a class="btn btn-secondary text-dark" href="PersonalEditar?Id=@usuario.Id" role="button">
+                                <i class="oi oi-pencil text-dark"></i>
+                            </a>
+                        </td>
+                        <td>
+                            <button class="btn btn-secondary" @onclick="() => borrar(usuario.Id)" role="button">
+                                <i class="oi oi-trash text-dark"></i>
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </Authorized>
+</AuthorizeView>
 
 @code
 {
     //lista de datos de la clase Usuarios
-    private List<Usuarios> usuarios = new List<Usuarios>();
+    private List<UsuarioEditar> usuarios = new List<UsuarioEditar>();
     Busqueda busqueda = new Busqueda();
 
     public void lee_usuarios(String Texto)
@@ -82,12 +86,12 @@
         {
             connection.Open(); //abriendo la conección a la base de datos, si xampp no está abierto no funciona
 
-            string q = "SELECT * FROM usuarios";
+            string q = "SELECT * FROM AspNetUsers";
             if (Texto != "")
             {
                 q = q + " where tipo_empleado ='" + Texto + "' ";
-                q = q + "or contraseña ='" + Texto + "' ";
-                q = q + "or codigo_empleado ='" + Texto + "' ";
+                // q = q + "or contraseña ='" + Texto + "' ";
+                q = q + "or codigo ='" + Texto + "' ";
                 q = q + "or nombre ='" + Texto + "' ";
                 q = q + "or puerto ='" + Texto + "' ";
                 q = q + "or pais ='" + Texto + "'";
@@ -97,11 +101,10 @@
             using var reader = command.ExecuteReader();
             while (reader.Read())
             {
-                var usuario = new Usuarios();
-                usuario.Id = (int)reader["id"];
-                usuario.Tipo = reader["Tipo_empleado"].ToString();
-                usuario.Contraseña = reader["Contraseña"].ToString();
-                usuario.Codigo = reader["Codigo_empleado"].ToString();
+                var usuario = new UsuarioEditar();
+                usuario.Id = reader["id"].ToString();
+                usuario.Tipo_Empleado = reader["Tipo_empleado"].ToString();
+                usuario.Codigo = reader["Codigo"].ToString();
                 usuario.Nombre = reader["Nombre"].ToString();
                 usuario.Puerto = reader["Puerto"].ToString();
                 usuario.Pais = reader["Pais"].ToString();
@@ -129,14 +132,14 @@
         lee_usuarios("");
     }
 
-    private void borrar(int id)
+    private void borrar(string id)
     {
         String connString = config.GetConnectionString("MySqlNaviera");
         {
             using var connection = new MySqlConnection(connString);
             {
                 connection.Open();
-                String q = "Delete from usuarios where id = '" + id + "'";
+                String q = "Delete from AspNetUsers where id = '" + id + "'";
 
                 using var command = new MySqlCommand(q, connection);
                 var resultado = command.ExecuteNonQuery();

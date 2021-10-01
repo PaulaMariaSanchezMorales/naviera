@@ -13,99 +13,106 @@ namespace ProyectoMaersk.Pages
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Components;
 #nullable restore
-#line 1 "C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\_Imports.razor"
+#line 1 "C:\Users\osanc\source\repos\naviera\ProyectoMaersk\_Imports.razor"
 using System.Net.Http;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 2 "C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\_Imports.razor"
+#line 2 "C:\Users\osanc\source\repos\naviera\ProyectoMaersk\_Imports.razor"
 using Microsoft.AspNetCore.Authorization;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 3 "C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\_Imports.razor"
+#line 3 "C:\Users\osanc\source\repos\naviera\ProyectoMaersk\_Imports.razor"
 using Microsoft.AspNetCore.Components.Authorization;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 4 "C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\_Imports.razor"
+#line 4 "C:\Users\osanc\source\repos\naviera\ProyectoMaersk\_Imports.razor"
 using Microsoft.AspNetCore.Components.Forms;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 5 "C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\_Imports.razor"
+#line 5 "C:\Users\osanc\source\repos\naviera\ProyectoMaersk\_Imports.razor"
 using Microsoft.AspNetCore.Components.Routing;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 6 "C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\_Imports.razor"
+#line 6 "C:\Users\osanc\source\repos\naviera\ProyectoMaersk\_Imports.razor"
 using Microsoft.AspNetCore.Components.Web;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 7 "C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\_Imports.razor"
+#line 7 "C:\Users\osanc\source\repos\naviera\ProyectoMaersk\_Imports.razor"
 using Microsoft.AspNetCore.Components.Web.Virtualization;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 8 "C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\_Imports.razor"
+#line 8 "C:\Users\osanc\source\repos\naviera\ProyectoMaersk\_Imports.razor"
 using Microsoft.JSInterop;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 9 "C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\_Imports.razor"
+#line 9 "C:\Users\osanc\source\repos\naviera\ProyectoMaersk\_Imports.razor"
 using ProyectoMaersk;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 10 "C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\_Imports.razor"
+#line 10 "C:\Users\osanc\source\repos\naviera\ProyectoMaersk\_Imports.razor"
 using ProyectoMaersk.Shared;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 1 "C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\Pages\PersonalEditar.razor"
-using Microsoft.AspNetCore.WebUtilities;
-
-#line default
-#line hidden
-#nullable disable
-#nullable restore
-#line 2 "C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\Pages\PersonalEditar.razor"
+#line 1 "C:\Users\osanc\source\repos\naviera\ProyectoMaersk\Pages\PersonalEditar.razor"
 using Microsoft.Extensions.Configuration;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 3 "C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\Pages\PersonalEditar.razor"
+#line 2 "C:\Users\osanc\source\repos\naviera\ProyectoMaersk\Pages\PersonalEditar.razor"
 using MySqlConnector;
 
 #line default
 #line hidden
 #nullable disable
 #nullable restore
-#line 4 "C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\Pages\PersonalEditar.razor"
-using Clases;
+#line 3 "C:\Users\osanc\source\repos\naviera\ProyectoMaersk\Pages\PersonalEditar.razor"
+using Microsoft.AspNetCore.Identity;
+
+#line default
+#line hidden
+#nullable disable
+#nullable restore
+#line 4 "C:\Users\osanc\source\repos\naviera\ProyectoMaersk\Pages\PersonalEditar.razor"
+using ProyectoMaersk.Clases;
+
+#line default
+#line hidden
+#nullable disable
+#nullable restore
+#line 5 "C:\Users\osanc\source\repos\naviera\ProyectoMaersk\Pages\PersonalEditar.razor"
+using Microsoft.AspNetCore.WebUtilities;
 
 #line default
 #line hidden
@@ -119,10 +126,10 @@ using Clases;
         }
         #pragma warning restore 1998
 #nullable restore
-#line 76 "C:\Users\pmari\Google Drive\2021\C5\2. proyecto de prácticas\naviera\ProyectoMaersk\Pages\PersonalEditar.razor"
+#line 80 "C:\Users\osanc\source\repos\naviera\ProyectoMaersk\Pages\PersonalEditar.razor"
  
-    int Id = 0;
-    Usuarios usuario = new Usuarios();
+    string Id = "";
+    UsuarioEditar usuario = new UsuarioEditar();
 
     List<Tipo_empleado> Tipo_empleados = new List<Tipo_empleado>();
     List<Pais> Paises = new List<Pais>();
@@ -199,7 +206,7 @@ using Clases;
         }
     }
 
-    void grabar()
+    public async Task grabar()
     {
         String connString = config.GetConnectionString("MySqlNaviera");
         using var connection = new MySqlConnection(connString);
@@ -207,25 +214,35 @@ using Clases;
             String q = "";
 
             connection.Open();
-            if (usuario.Id > 0)
+            if (usuario.Id != null)
             {
-                q = q + "UPDATE usuarios SET ";
+                q = q + "UPDATE AspNetUsers SET ";
                 q = q + "nombre = '" + usuario.Nombre + "',";
-                q = q + "tipo_empleado = '" + usuario.Tipo + "',";
+                q = q + "tipo_empleado = '" + usuario.Tipo_Empleado + "',";
                 q = q + " puerto = '" + usuario.Puerto + "',";
                 q = q + " pais = '" + usuario.Pais + "'";
-
                 q = q + " where id = '" + usuario.Id + "'";
             }
             else
             {
+                usuario.Id = Guid.NewGuid().ToString();
                 usuario.Codigo = Guid.NewGuid().ToString("N").Substring(0, 6); //generar numeros random, es una funcion ya por los sistemas para generar un id unico
-
-                q = q + "INSERT INTO usuarios(tipo_empleado, contraseña, codigo_empleado, nombre, puerto, pais)" +
-                    "values ('" + usuario.Tipo + "','" + usuario.Contraseña + "','" + usuario.Codigo + "','" + usuario.Nombre + "','" + usuario.Puerto + "','" + usuario.Pais + "')";
+                string nombreandemail = usuario.Codigo + "@naviera.com";
+                q = q + "INSERT INTO AspNetUsers(Id, UserName, Email, EmailConfirmed, PhoneNumberConfirmed, TwoFactorEnabled, LockOutEnabled, AccessFailedCount, tipo_empleado, codigo, nombre, puerto, pais)" +
+                    "values ('" + usuario.Id + "','" + nombreandemail + "','" + nombreandemail + "','1','1','0','0','0','" + usuario.Tipo_Empleado + "','" + usuario.Codigo + "','" + usuario.Nombre + "','" + usuario.Puerto + "','" + usuario.Pais + "')";
             }
             using var command = new MySqlCommand(q, connection);
             var resultado = command.ExecuteNonQuery();
+
+            // Resetea la contraseña
+            if (!string.IsNullOrEmpty(usuario.Contraseña))
+            {
+                var user = await UserManager.FindByIdAsync(usuario.Id);
+                user.SecurityStamp = "xx";
+                var token = await UserManager.GeneratePasswordResetTokenAsync(user);
+                var result = await UserManager.ResetPasswordAsync(user, token, usuario.Contraseña);
+            }
+
         }
 
         NavManager.NavigateTo("/Personal");
@@ -240,7 +257,7 @@ using Clases;
             String parametro = param.First();
             if (parametro != null)
             {
-                Int32.TryParse(parametro, out Id);
+                Id = parametro;
             }
         }
 
@@ -250,15 +267,14 @@ using Clases;
         using var connection = new MySqlConnection(connString);
         {
             connection.Open();
-            String q = "SELECT * FROM usuarios where id = '" + Id + "';";
+            String q = "SELECT * FROM AspNetUsers where id = '" + Id + "';";
             using var command = new MySqlCommand(q, connection);
             using var reader = command.ExecuteReader();
             while (reader.Read())
             {
-                usuario.Id = (int)reader["id"];
-                usuario.Tipo = reader["tipo_empleado"].ToString();
-                usuario.Contraseña = reader["contraseña"].ToString();
-                usuario.Codigo = reader["codigo_empleado"].ToString();
+                usuario.Id = reader["id"].ToString();
+                usuario.Tipo_Empleado = reader["tipo_empleado"].ToString();
+                usuario.Codigo = reader["codigo"].ToString();
                 usuario.Nombre = reader["nombre"].ToString();
                 usuario.Puerto = reader["puerto"].ToString();
                 usuario.Pais = reader["pais"].ToString();
@@ -270,9 +286,10 @@ using Clases;
 #line default
 #line hidden
 #nullable disable
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private UserManager<UsuarioIdentity> UserManager { get; set; }
+        [global::Microsoft.AspNetCore.Components.InjectAttribute] private SignInManager<UsuarioIdentity> SignInManager { get; set; }
         [global::Microsoft.AspNetCore.Components.InjectAttribute] private NavigationManager NavManager { get; set; }
         [global::Microsoft.AspNetCore.Components.InjectAttribute] private Microsoft.Extensions.Configuration.IConfiguration config { get; set; }
-        [global::Microsoft.AspNetCore.Components.InjectAttribute] private LoginState loginState { get; set; }
     }
 }
 #pragma warning restore 1591

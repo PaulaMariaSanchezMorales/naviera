@@ -1,10 +1,19 @@
-﻿@layout BlankLayout 
+﻿@layout BlankLayout
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.Authentication;
 @using Microsoft.Extensions.Configuration
+@using System.Security.Claims;
+@using Microsoft.AspNetCore.Authentication.Cookies;
+@using Microsoft.AspNetCore.Http;
 @using MySqlConnector
 @using Clases
-@inject LoginState loginState
-@inject Microsoft.Extensions.Configuration.IConfiguration config
+
+@inject IJSRuntime JSRuntime
 @inject NavigationManager NavManager
+@inject SignInManager<LoginState> SignInManager
+@inject IHostEnvironmentAuthenticationStateProvider HostAuthentication
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject Microsoft.Extensions.Configuration.IConfiguration config
 @page "/Login"
 
 
@@ -54,32 +63,59 @@
     //guardar los datos de la clase DataLogin
     private DataLogIn login = new DataLogIn();
 
-    public void ingresar()
+    public async Task ingresar()
     {
+        LoginState user = new LoginState();
         String connString = config.GetConnectionString("MySqlNaviera");
-
-        loginState.SetLogin(true, login.Usuario); //función en la que se asignan los valores
-        lee_usuarios(login.Usuario, login.Contraseña); //comprueba la contraseña y usuario ingresados
-        if (login.Error == "")
+        // LoginState result = lee_usuarios(login.Usuario, login.Contraseña); //comprueba la contraseña y usuario ingresados
+        var result = new LoginState();
+        if (login.Usuario == "abc")
         {
-            if (loginState.EsAdministrador)
-            {
+            result.codigo = "123";
+            result.nombre = "Marito";
+            result.esAdministrador = true;
+            result.error = "";
+        }
+        else
+        {
+            result.error = "Nel Pastel";
+        }
+        if (result.error == "")
+        {
+
+            ClaimsPrincipal principal = await SignInManager.CreateUserPrincipalAsync(user);
+            SignInManager.Context.User = principal;
+            HostAuthentication!.SetAuthenticationState(Task.FromResult(new AuthenticationState(principal)));
+            // If you don't need doing anything without moving to next page, you can remove this.
+            AuthenticationState authState = await AuthenticationStateProvider!.GetAuthenticationStateAsync();
+
+            //var claims = new List<Claim>();
+            //claims.Add(new Claim(ClaimTypes.Name, result.codigo));
+            //claims.Add(new Claim("nombre", result.nombre));
+            //if (result.esAdministrador)
+            //    claims.Add(new Claim(ClaimTypes.Role, "Administrator"));
+            //else
+            //    claims.Add(new Claim(ClaimTypes.Role, "Usuario"));
+
+            // var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+            // var authProperties = new AuthenticationProperties();
+            // await SignInManager.SignInAsync(result, authProperties);
+
+            if (result.esAdministrador)
                 NavManager.NavigateTo("/Personal");
-            }
             else
-            {
                 NavManager.NavigateTo("/");
-            }
         }
     }
 
-    public void lee_usuarios(String usuario, String contraseña)
+    public LoginState lee_usuarios(String usuario, String contraseña)
     {
-
+        var loginState = new LoginState();
+        loginState.codigo = login.Usuario;
         loginState.nombre = "";
         loginState.codigo = "";
-        loginState.IsLoggedIn = false;
-        loginState.EsAdministrador = false;
+        loginState.isLoggedIn = false;
+        loginState.esAdministrador = false;
         login.Error = "";
 
         String connString = config.GetConnectionString("MySqlNaviera");
@@ -96,7 +132,7 @@
             else
             {
                 q = "SELECT * FROM usuarios";
-                q = q + " where codigo_empleado ='" + login.Usuario + "' ";
+                q = q + " where codigo ='" + login.Usuario + "' ";
                 q = q + "and contraseña ='" + login.Contraseña + "'";
 
                 using var command = new MySqlCommand(q, connection);
@@ -104,15 +140,15 @@
                 if (reader.Read())
                 {
                     loginState.nombre = reader["Nombre"].ToString();
-                    loginState.codigo = reader["Codigo_empleado"].ToString();
-                    loginState.IsLoggedIn = true;
+                    loginState.codigo = reader["Codigo"].ToString();
+                    loginState.isLoggedIn = true;
                     if (reader["tipo_empleado"].ToString() == "Administrador")
                     {
-                        loginState.EsAdministrador = true;
+                        loginState.esAdministrador = true;
                     }
                     else
                     {
-                        loginState.EsAdministrador = false;
+                        loginState.esAdministrador = false;
                     }
                 }
                 else
@@ -122,5 +158,6 @@
             }
 
         }
+        return loginState;
     }
 }

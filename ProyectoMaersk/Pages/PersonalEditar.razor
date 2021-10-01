@@ -1,81 +1,85 @@
-﻿@using Microsoft.AspNetCore.WebUtilities
-@using Microsoft.Extensions.Configuration
+﻿@using Microsoft.Extensions.Configuration
 @using MySqlConnector
-@using Clases
-@inject LoginState loginState //para poder usar el loginState
-@inject Microsoft.Extensions.Configuration.IConfiguration config    
+@using Microsoft.AspNetCore.Identity
+@using ProyectoMaersk.Clases
+@using Microsoft.AspNetCore.WebUtilities
+@inject Microsoft.Extensions.Configuration.IConfiguration config
 @inject NavigationManager NavManager
+@inject SignInManager<UsuarioIdentity> SignInManager
+@inject UserManager<UsuarioIdentity> UserManager
+
 
 @page "/PersonalEditar"
 
-@if (loginState.EsAdministrador)
-{
-    <h1>Personal</h1>
+<AuthorizeView>
+    <Authorized Context="Auth">
+        <h1>Personal</h1>
 
-    <p>Modificar personal</p>
+        <p>Modificar personal</p>
 
-    <div class="container">
-        <EditForm Model=@usuario OnValidSubmit="@grabar">
-            <DataAnnotationsValidator /> <!--acá es donde se valida que los datos sean correctos, muestra los cuadritos en rojo, valida los espacios vacíos y datos incorrectos con respecto al tipo que se le asignó en la base de datos-->
-            <div class="form-group">
-                <label for="tipoempleado">Tipo de empleado</label>
-                <InputSelect @bind-Value="usuario.Tipo" class="form-control" id="tipoempleado">
-                    <option value="">Elegir...</option>
-                    @foreach (var tipo_empleado in Tipo_empleados)
+        <div class="container">
+            <EditForm Model=@usuario OnValidSubmit="@grabar">
+                <DataAnnotationsValidator /> <!--acá es donde se valida que los datos sean correctos, muestra los cuadritos en rojo, valida los espacios vacíos y datos incorrectos con respecto al tipo que se le asignó en la base de datos-->
+                <div class="form-group">
+                    <label for="tipoempleado">Tipo de empleado</label>
+                    <InputSelect @bind-Value="usuario.Tipo_Empleado" class="form-control" id="tipoempleado">
+                        <option value="">Elegir...</option>
+                        @foreach (var tipo_empleado in Tipo_empleados)
                         {
-                        <option value="@tipo_empleado.Nombre">@tipo_empleado.Nombre</option>
+                            <option value="@tipo_empleado.Nombre">@tipo_empleado.Nombre</option>
                         }
-                </InputSelect>
-            </div>
-            <div class="form-group">
-                <label for="nombre">Nombre</label>
-                <InputText @bind-Value="usuario.Nombre" class="form-control" id="nombre" />
-            </div>
-            <div class="form-group">
-                <label for="contraseña">Contraseña</label>
-                <InputText @bind-Value="usuario.Contraseña" class="form-control" id="contraseña" />
-            </div>
-            <div class="form-group">
-                <label for="codigo">Código de empleado</label>
-                <!--generar el código de empleado, verificando el Id-->
-                @if (usuario.Id > 0)
-                {
-                    <InputText @bind-Value="usuario.Codigo" readonly class="form-control" id="codigo" />
-                }
-                else
-                {
-                    <InputText @bind-Value="usuario.Codigo" readonly class="form-control" id="codigo" />
-                }
-            </div>
-            <div class="form-group">
-                <label for="pais">Pais</label>
-                <InputSelect @bind-Value="usuario.Pais" class="form-control" id="pais" @oninput="Llena_Puertos_Evento">
-                    <option value="">Elegir...</option>
-                    @foreach (var pais in Paises)
+                    </InputSelect>
+                </div>
+                <div class="form-group">
+                    <label for="nombre">Nombre</label>
+                    <InputText @bind-Value="usuario.Nombre" class="form-control" id="nombre" />
+                </div>
+                <div class="form-group">
+                    <label for="contraseña">Contraseña</label>
+                    <InputText @bind-Value="usuario.Contraseña" class="form-control" id="contraseña" />
+                </div>
+                <div class="form-group">
+                    <label for="codigo">Código de empleado</label>
+                    <!--generar el código de empleado, verificando el Id-->
+                    @if (usuario.Id != "")
+                    {
+                        <InputText @bind-Value="usuario.Codigo" readonly class="form-control" id="codigo" />
+                    }
+                    else
+                    {
+                        <InputText @bind-Value="usuario.Codigo" readonly class="form-control" id="codigo" />
+                    }
+                </div>
+                <div class="form-group">
+                    <label for="pais">Pais</label>
+                    <InputSelect @bind-Value="usuario.Pais" class="form-control" id="pais" @oninput="Llena_Puertos_Evento">
+                        <option value="">Elegir...</option>
+                        @foreach (var pais in Paises)
                         {
-                        <option value="@pais.Codigo">@pais.Nombre</option>
+                            <option value="@pais.Codigo">@pais.Nombre</option>
                         }
-                </InputSelect>
-            </div>
-            <div class="form-group">
-                <label for="puerto">Puerto</label>
-                <InputSelect @bind-Value="usuario.Puerto" class="form-control" id="puerto">
-                    <option value="">Elegir...</option>
-                    @foreach (var puerto in Puertos)
+                    </InputSelect>
+                </div>
+                <div class="form-group">
+                    <label for="puerto">Puerto</label>
+                    <InputSelect @bind-Value="usuario.Puerto" class="form-control" id="puerto">
+                        <option value="">Elegir...</option>
+                        @foreach (var puerto in Puertos)
                         {
-                        <option value="@puerto.Codigo">@puerto.Nombre</option>
+                            <option value="@puerto.Codigo">@puerto.Nombre</option>
                         }
-                </InputSelect>
-            </div>
-            <input type="submit" class="btn btn-primary text-dark" value="Enviar" />
-        </EditForm>
-    </div>
-}
+                    </InputSelect>
+                </div>
+                <input type="submit" class="btn btn-primary text-dark" value="Enviar" />
+            </EditForm>
+        </div>
+    </Authorized>
+</AuthorizeView>
 
 @code
 {
-    int Id = 0;
-    Usuarios usuario = new Usuarios();
+    string Id = "";
+    UsuarioEditar usuario = new UsuarioEditar();
 
     List<Tipo_empleado> Tipo_empleados = new List<Tipo_empleado>();
     List<Pais> Paises = new List<Pais>();
@@ -152,7 +156,7 @@
         }
     }
 
-    void grabar()
+    public async Task grabar()
     {
         String connString = config.GetConnectionString("MySqlNaviera");
         using var connection = new MySqlConnection(connString);
@@ -160,25 +164,35 @@
             String q = "";
 
             connection.Open();
-            if (usuario.Id > 0)
+            if (usuario.Id != null)
             {
-                q = q + "UPDATE usuarios SET ";
+                q = q + "UPDATE AspNetUsers SET ";
                 q = q + "nombre = '" + usuario.Nombre + "',";
-                q = q + "tipo_empleado = '" + usuario.Tipo + "',";
+                q = q + "tipo_empleado = '" + usuario.Tipo_Empleado + "',";
                 q = q + " puerto = '" + usuario.Puerto + "',";
                 q = q + " pais = '" + usuario.Pais + "'";
-
                 q = q + " where id = '" + usuario.Id + "'";
             }
             else
             {
+                usuario.Id = Guid.NewGuid().ToString();
                 usuario.Codigo = Guid.NewGuid().ToString("N").Substring(0, 6); //generar numeros random, es una funcion ya por los sistemas para generar un id unico
-
-                q = q + "INSERT INTO usuarios(tipo_empleado, contraseña, codigo_empleado, nombre, puerto, pais)" +
-                    "values ('" + usuario.Tipo + "','" + usuario.Contraseña + "','" + usuario.Codigo + "','" + usuario.Nombre + "','" + usuario.Puerto + "','" + usuario.Pais + "')";
+                string nombreandemail = usuario.Codigo + "@naviera.com";
+                q = q + "INSERT INTO AspNetUsers(Id, UserName, Email, EmailConfirmed, PhoneNumberConfirmed, TwoFactorEnabled, LockOutEnabled, AccessFailedCount, tipo_empleado, codigo, nombre, puerto, pais)" +
+                    "values ('" + usuario.Id + "','" + nombreandemail + "','" + nombreandemail + "','1','1','0','0','0','" + usuario.Tipo_Empleado + "','" + usuario.Codigo + "','" + usuario.Nombre + "','" + usuario.Puerto + "','" + usuario.Pais + "')";
             }
             using var command = new MySqlCommand(q, connection);
             var resultado = command.ExecuteNonQuery();
+
+            // Resetea la contraseña
+            if (!string.IsNullOrEmpty(usuario.Contraseña))
+            {
+                var user = await UserManager.FindByIdAsync(usuario.Id);
+                user.SecurityStamp = "xx";
+                var token = await UserManager.GeneratePasswordResetTokenAsync(user);
+                var result = await UserManager.ResetPasswordAsync(user, token, usuario.Contraseña);
+            }
+
         }
 
         NavManager.NavigateTo("/Personal");
@@ -193,7 +207,7 @@
             String parametro = param.First();
             if (parametro != null)
             {
-                Int32.TryParse(parametro, out Id);
+                Id = parametro;
             }
         }
 
@@ -203,15 +217,14 @@
         using var connection = new MySqlConnection(connString);
         {
             connection.Open();
-            String q = "SELECT * FROM usuarios where id = '" + Id + "';";
+            String q = "SELECT * FROM AspNetUsers where id = '" + Id + "';";
             using var command = new MySqlCommand(q, connection);
             using var reader = command.ExecuteReader();
             while (reader.Read())
             {
-                usuario.Id = (int)reader["id"];
-                usuario.Tipo = reader["tipo_empleado"].ToString();
-                usuario.Contraseña = reader["contraseña"].ToString();
-                usuario.Codigo = reader["codigo_empleado"].ToString();
+                usuario.Id = reader["id"].ToString();
+                usuario.Tipo_Empleado = reader["tipo_empleado"].ToString();
+                usuario.Codigo = reader["codigo"].ToString();
                 usuario.Nombre = reader["nombre"].ToString();
                 usuario.Puerto = reader["puerto"].ToString();
                 usuario.Pais = reader["pais"].ToString();

@@ -1,8 +1,5 @@
 ﻿@using Clases
 @inherits LayoutComponentBase
-@implements IDisposable
-@inject LoginState loginState;
-
 
 <div class="page">
     <div class="sidebar">
@@ -10,26 +7,11 @@
     </div>
 
     <div class="main">
-        <div class="top-row px-4 auth" style="background-color:#778DA9"> <!--hasta arriba de la página se ingresa a Login-->
-            @if (!loginState.IsLoggedIn)
-            {
-                <a href="Login" class="text-white">Log in</a>
-            }
+        <div class="top-row" style="background-color:#778DA9">
+            <LoginDisplay />
         </div>
-
-        <div class="content px-4"> <!--si se puede entrar se muestra el body-->
+        <div class="content px-4">
             @Body
         </div>
     </div>
 </div>
-
-@code {
-    protected override void OnInitialized()
-    {
-        loginState.OnChange += StateHasChanged;
-    }
-    public void Dispose()
-    {
-        loginState.OnChange -= StateHasChanged;
-    }
-}

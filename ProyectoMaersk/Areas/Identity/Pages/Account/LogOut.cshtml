@@ -1,7 +1,8 @@
 ﻿@page
 @using Microsoft.AspNetCore.Identity
+@using ProyectoMaersk.Clases
 @attribute [IgnoreAntiforgeryToken]
-@inject SignInManager<IdentityUser> SignInManager
+@inject SignInManager<UsuarioIdentity> SignInManager
 @functions {
     public async Task<IActionResult> OnPost()
     {
